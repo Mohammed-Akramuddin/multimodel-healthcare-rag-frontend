@@ -28,7 +28,7 @@ const Sidebar = () => {
   const menuItems = [
     { name: 'Overview', path: '/', icon: LayoutDashboard, roles: ['admin', 'doctor', 'nurse'] },
     { name: 'My Care', path: `/patients/${user?.patient_profile_id || 1}`, icon: Activity, roles: ['patient'] }, 
-    { name: 'Patients', path: '/patients', icon: Users, roles: ['admin', 'doctor', 'nurse'] },
+    { name: 'Patients', path: '/patients', icon: Users, roles: ['admin', 'doctor'] },
     { name: 'Assistant', path: '/assistant', icon: MessageSquare, roles: ['admin', 'doctor', 'nurse', 'patient'] },
     { name: 'Audit Logs', path: '/audit', icon: ShieldCheck, roles: ['admin'] },
     { name: 'Admin Panel', path: '/admin', icon: ShieldAlert, roles: ['admin'] },
