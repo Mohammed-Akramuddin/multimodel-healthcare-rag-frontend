@@ -9,19 +9,20 @@ import {
   Calendar, 
   Clock, 
   User as UserIcon, 
-  Activity,
-  ShieldCheck,
-  Plus,
-  ChevronRight,
-  Download,
-  Image as ImageIcon,
-  Shield,
-  StickyNote,
-  X,
-  CheckCircle2,
-  AlertCircle,
-  FolderLock,
-  Fingerprint
+  Activity, 
+  ShieldCheck, 
+  Plus, 
+  ChevronRight, 
+  Download, 
+  Image as ImageIcon, 
+  Shield, 
+  StickyNote, 
+  X, 
+  CheckCircle2, 
+  AlertCircle, 
+  FolderLock, 
+  Fingerprint,
+  Building2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../lib/utils';
@@ -74,7 +75,7 @@ const PatientDetail = () => {
         setUsers(uRes.data.filter((u: any) => u.role === 'doctor' || u.role === 'nurse'));
       }
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Failed to load patient data');
+      setError(err.response?.data?.detail || 'Failed to load patient clinical data');
     } finally {
       setIsLoading(false);
     }
@@ -94,6 +95,7 @@ const PatientDetail = () => {
         notes: notes.trim()
       });
       setPatient(res.data);
+      alert('Patient chart updated successfully');
     } catch (err: any) {
       alert(err.response?.data?.detail || 'Failed to update record');
     } finally {
@@ -143,7 +145,7 @@ const PatientDetail = () => {
         access_level: grantLevel
       });
       setGrantUserId('');
-      alert('Access provisioned successfully');
+      alert('Practitioner access provisioned successfully');
     } catch (err: any) {
       alert(err.response?.data?.detail || 'Failed to grant access');
     } finally {
@@ -151,14 +153,14 @@ const PatientDetail = () => {
     }
   };
 
-  if (isLoading) return <div className="p-12 text-current font-black uppercase tracking-widest text-center animate-pulse">Synchronizing Chart...</div>;
+  if (isLoading) return <div className="p-12 text-center text-text-muted font-bold uppercase tracking-wider text-xs animate-pulse">Synchronizing Shell Biotech Chart...</div>;
   if (!patient || error) return (
-    <div className="min-h-screen flex items-center justify-center p-12">
-      <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-8 rounded-[2rem] max-w-lg text-center shadow-xl">
-        <AlertCircle size={48} className="mx-auto mb-4" />
-        <h2 className="text-xl font-black mb-2 uppercase tracking-tight">Access Denied / Not Found</h2>
-        <p className="font-bold opacity-70 underline decoration-red-500/30">{error || 'Reference ID error.'}</p>
-        <Link to="/patients" className="inline-block mt-8 bg-red-500 text-white px-8 py-3 rounded-2xl font-black uppercase tracking-widest text-xs">Return to Registry</Link>
+    <div className="min-h-screen flex items-center justify-center p-8">
+      <div className="bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 p-8 rounded-2xl max-w-md text-center shadow-lg">
+        <AlertCircle size={40} className="mx-auto mb-3" />
+        <h2 className="font-heading text-lg font-black uppercase tracking-tight">Access Restricted</h2>
+        <p className="text-xs font-medium mt-1">{error || 'Reference ID error.'}</p>
+        <Link to="/patients" className="inline-block mt-6 bg-[#0b1f33] text-white px-5 py-2.5 rounded-xl font-bold uppercase tracking-wider text-xs">Return to Registry</Link>
       </div>
     </div>
   );
@@ -169,10 +171,9 @@ const PatientDetail = () => {
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="p-6 md:p-10 space-y-10 pb-20 relative overflow-hidden bg-background"
+      className="p-6 md:p-10 space-y-8 pb-20 relative overflow-hidden bg-background text-text-main"
     >
-      {/* Mesh Background */}
-      <div className="absolute inset-0 bg-mesh opacity-30 z-0 pointer-events-none" />
+      <div className="absolute inset-0 bg-mesh opacity-40 z-0 pointer-events-none" />
       
       <div className="absolute top-0 right-0 w-[400px] h-[400px] -mr-32 -mt-20 opacity-10 pointer-events-none">
         <HealthScene type="heart" />
@@ -181,437 +182,307 @@ const PatientDetail = () => {
       <motion.header 
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
-        className="flex flex-col sm:flex-row sm:items-center justify-between relative z-10 gap-8"
+        className="flex flex-col sm:flex-row sm:items-center justify-between relative z-10 gap-6"
       >
-        <div className="flex items-center gap-6">
-          <Link to="/patients" className="p-4 bg-surface border border-subtle rounded-2xl transition-all text-text-muted hover:text-primary hover:border-primary/30 shadow-sm flex items-center justify-center">
-            <ArrowLeft size={24} />
+        <div className="flex items-center gap-4">
+          <Link to="/patients" className="p-3 bg-surface border border-border-main rounded-xl text-text-muted hover:text-secondary hover:border-secondary/40 shadow-xs flex items-center justify-center transition-all">
+            <ArrowLeft size={20} />
           </Link>
-          <div className="space-y-1">
-            <div className="flex flex-wrap items-center gap-4">
-              <h1 className="text-3xl md:text-4xl font-black tracking-tighter text-text-main">{patient.full_name}</h1>
+          <div>
+            <div className="flex flex-wrap items-center gap-3">
+              <h1 className="font-heading text-2xl md:text-3xl font-black tracking-tight text-text-main">{patient.full_name}</h1>
               <div className={cn(
-                "px-4 py-1.5 text-[10px] font-black rounded-full border uppercase tracking-widest shadow-sm",
-                canWrite ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" : "bg-primary/10 text-primary border-primary/20"
+                "px-3 py-1 text-[10px] font-bold rounded-full border uppercase tracking-wider",
+                canWrite ? "bg-secondary/10 text-secondary border-secondary/20" : "bg-[#0b1f33]/10 text-[#0b1f33] border-[#0b1f33]/20"
               )}>
                 {canWrite ? 'Read-Write Access' : 'Read-Only Mode'}
               </div>
             </div>
-            <p className="text-text-muted font-bold text-sm tracking-wide flex items-center gap-2">
-               <Fingerprint size={14} /> {patient.external_id} <span className="opacity-20">|</span> Clinical Reference Chart
+            <p className="text-text-muted font-medium text-xs flex items-center gap-2 mt-1">
+               <Fingerprint size={13} className="text-secondary" /> 
+               <span className="font-mono font-bold text-text-main">{patient.external_id}</span> 
+               <span className="opacity-30">|</span> Shell Biotech Clinical Reference
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-4 self-end sm:self-auto">
+        <div className="flex items-center gap-3">
           {canWrite && (
             <motion.button 
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setIsUploadModalOpen(true)}
-              className="bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-[2rem] font-black flex items-center gap-3 transition-all shadow-xl shadow-primary/20 text-sm"
+              className="bg-[#0b1f33] hover:bg-[#16324f] dark:bg-secondary dark:hover:bg-secondary-light text-white px-5 py-3 rounded-xl font-bold flex items-center gap-2 transition-all shadow-sm text-xs uppercase tracking-wider cursor-pointer"
             >
-              <Upload size={20} />
-              Injest Record
+              <Upload size={16} />
+              Injest Records / Scans
             </motion.button>
           )}
         </div>
       </motion.header>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 relative z-10">
-        <div className="lg:col-span-2 space-y-10">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 relative z-10">
+        <div className="lg:col-span-2 space-y-8">
           {/* Patient Form */}
           <motion.form 
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+            transition={{ delay: 0.1 }}
             onSubmit={handleSave} 
-            className="bg-surface border border-subtle rounded-[3rem] p-10 space-y-8 shadow-2xl relative overflow-hidden"
+            className="bg-surface border border-border-main rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm relative overflow-hidden"
           >
-            <div className="flex items-center justify-between border-b border-subtle pb-6 mb-2">
-               <h3 className="text-xl font-black flex items-center gap-4">
-                  <div className="p-3 bg-primary/10 rounded-2xl">
-                    <StickyNote size={24} className="text-primary" />
+            <div className="flex items-center justify-between border-b border-border-main pb-4">
+               <h3 className="font-heading text-lg font-black flex items-center gap-2.5 text-text-main">
+                  <div className="p-2 bg-secondary/10 rounded-xl">
+                    <StickyNote size={18} className="text-secondary" />
                   </div>
-                  Sequence Identity
+                  Sequence Identity & Notes
                </h3>
                {!canWrite && (
-                  <div className="flex items-center gap-2 bg-primary/5 text-primary px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border border-primary/20">
-                    <Shield size={14} /> Immutable Chart
+                  <div className="flex items-center gap-1.5 bg-secondary/10 text-secondary px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border border-secondary/20">
+                    <Shield size={12} /> Immutable Chart
                   </div>
                )}
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-              <div className="space-y-3">
-                <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.3em] ml-1">Legal Full Name</label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider ml-1">Patient Legal Full Name</label>
                 <div className="relative group">
-                  <UserIcon className="absolute left-4 top-4 text-text-muted group-focus-within:text-primary transition-colors" size={18} />
+                  <UserIcon className="absolute left-3.5 top-3 text-text-muted group-focus-within:text-secondary transition-colors" size={17} />
                   <input
                     type="text"
-                    readOnly={!canWrite}
+                    disabled={!canWrite}
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="w-full bg-background/50 border border-subtle rounded-2xl px-4 py-4 pl-12 text-text-main focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-black disabled:opacity-50"
+                    className="w-full bg-surface border border-border-main rounded-xl px-3.5 py-2.5 pl-10 text-text-main focus:outline-none focus:ring-2 focus:ring-secondary/40 focus:border-secondary transition-all font-medium text-sm disabled:opacity-60"
                   />
                 </div>
               </div>
-              <div className="space-y-3">
-                <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.3em] ml-1">System UID / MRN</label>
+
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider ml-1">MRN / Clinical Identifier</label>
                 <div className="relative group">
-                  <Fingerprint className="absolute left-4 top-4 text-text-muted group-focus-within:text-primary transition-colors" size={18} />
+                  <Fingerprint className="absolute left-3.5 top-3 text-text-muted group-focus-within:text-secondary transition-colors" size={17} />
                   <input
                     type="text"
-                    readOnly={!canWrite}
+                    disabled={!canWrite}
                     value={externalId}
                     onChange={(e) => setExternalId(e.target.value)}
-                    className="w-full bg-background/50 border border-subtle rounded-2xl px-4 py-4 pl-12 text-text-main focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-black disabled:opacity-50"
+                    className="w-full bg-surface border border-border-main rounded-xl px-3.5 py-2.5 pl-10 text-text-main focus:outline-none focus:ring-2 focus:ring-secondary/40 focus:border-secondary transition-all font-mono font-medium text-sm disabled:opacity-60"
                   />
                 </div>
               </div>
-              <div className="space-y-3 col-span-2">
-                <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.3em] ml-1">Clinical Observation Thread</label>
-                <div className="relative group">
-                  <Activity className="absolute left-4 top-4 text-text-muted group-focus-within:text-primary transition-colors" size={18} />
-                  <textarea
-                    readOnly={!canWrite}
-                    rows={6}
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                    className="w-full bg-background/50 border border-subtle rounded-3xl px-4 py-5 pl-12 text-text-main focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-black resize-none disabled:opacity-50 min-h-[160px]"
-                  />
-                </div>
-              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider ml-1">
+                Clinical Formulations, Diagnosis & Care Notes
+              </label>
+              <textarea
+                rows={4}
+                disabled={!canWrite}
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Prescribed pharmaceutical formulations, lab parameters, treatment timeline..."
+                className="w-full bg-surface border border-border-main rounded-xl p-3.5 text-text-main focus:outline-none focus:ring-2 focus:ring-secondary/40 focus:border-secondary transition-all font-medium text-sm disabled:opacity-60 resize-none"
+              />
             </div>
 
             {canWrite && (
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                type="submit"
-                disabled={isSaving}
-                className="bg-primary hover:bg-primary/90 text-white px-10 py-5 rounded-[2rem] font-black transition-all shadow-2xl shadow-primary/30 disabled:opacity-50 flex items-center gap-3 uppercase tracking-widest text-xs"
-              >
-                {isSaving ? 'Syncing Chain...' : 'Commit Sequence Updates'}
-                <CheckCircle2 size={18} />
-              </motion.button>
+              <div className="flex justify-end pt-2">
+                <button
+                  type="submit"
+                  disabled={isSaving}
+                  className="bg-[#0b1f33] hover:bg-[#16324f] dark:bg-secondary dark:hover:bg-secondary-light text-white px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all disabled:opacity-50 cursor-pointer"
+                >
+                  {isSaving ? 'Updating...' : 'Save Chart Details'}
+                </button>
+              </div>
             )}
           </motion.form>
 
-          {/* Imaging Assets */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="bg-surface border border-subtle rounded-[3rem] overflow-hidden shadow-2xl"
-          >
-            <div className="p-10 border-b border-subtle flex items-center justify-between bg-secondary/5">
-              <h2 className="text-xl font-black flex items-center gap-4">
-                <div className="p-3 bg-secondary/20 rounded-2xl">
-                  <ImageIcon size={24} className="text-secondary" />
-                </div>
-                Imaging Matrix
-              </h2>
-              <span className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] bg-surface px-4 py-2 rounded-full border border-subtle">{images.length} SCANS DETECTED</span>
-            </div>
-            <div className="p-10 grid grid-cols-1 md:grid-cols-2 gap-10">
-              {images.length > 0 ? images.map((img) => (
-                <motion.div 
-                  key={img.id} 
-                  whileHover={{ y: -5 }}
-                  className="bg-background/40 border border-subtle rounded-[2.5rem] p-6 space-y-6 group hover:border-secondary transition-all shadow-sm"
-                >
-                  <div className="aspect-video bg-surface rounded-[1.5rem] border border-subtle flex items-center justify-center text-text-muted group-hover:text-secondary transition-colors overflow-hidden relative shadow-inner">
-                    <ImageIcon size={64} className="group-hover:scale-110 transition-transform duration-500" />
-                    <div className="absolute inset-0 bg-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </div>
-                  <div className="px-2">
-                    <h4 className="text-lg font-black tracking-tight mb-2 truncate text-text-main">{img.filename}</h4>
-                    <p className="text-xs text-text-muted font-medium line-clamp-2 leading-relaxed italic mb-4">"{img.caption}"</p>
-                    <div className="flex items-center justify-between">
-                       <span className="text-[10px] text-text-muted font-black uppercase tracking-widest opacity-60">TIMESTAMP:: {new Date(img.created_at).toLocaleDateString()}</span>
-                       <button className="p-2 bg-surface hover:bg-secondary/10 text-text-muted hover:text-secondary rounded-xl transition-all shadow-sm">
-                          <Download size={16} />
-                       </button>
-                    </div>
-                  </div>
-                </motion.div>
-              )) : (
-                <div className="col-span-2 py-20 text-center text-text-muted font-black uppercase tracking-[0.4em] text-sm italic opacity-30 italic">NO IMAGING SEQUENCES SYNCED</div>
-              )}
-            </div>
-          </motion.div>
-
-          {/* Document Registry */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="bg-surface border border-subtle rounded-[3rem] overflow-hidden shadow-2xl"
-          >
-            <div className="p-10 border-b border-subtle flex items-center justify-between bg-primary/5">
-              <h2 className="text-xl font-black flex items-center gap-4">
-                <div className="p-3 bg-primary/20 rounded-2xl">
-                  <FileText size={24} className="text-primary" />
-                </div>
-                Metadata Registry
-              </h2>
-              <span className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] bg-surface px-4 py-2 rounded-full border border-subtle">{docs.length} DATA BLOCKS</span>
-            </div>
-            <div className="divide-y divide-subtle">
-              {docs.length > 0 ? docs.map((doc, idx) => (
-                <motion.div 
-                  key={doc.id} 
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.5 + (idx * 0.1) }}
-                  className="p-10 flex items-center justify-between hover:bg-primary/5 transition-colors group cursor-default"
-                >
-                  <div className="flex items-center gap-8">
-                    <div className="w-16 h-16 rounded-[1.5rem] bg-surface border border-subtle flex items-center justify-center text-text-muted group-hover:text-primary transition-all shadow-sm group-hover:scale-105 group-hover:shadow-xl group-hover:shadow-primary/10">
-                      <FileText size={32} />
-                    </div>
-                    <div>
-                      <h4 className="text-xl font-black tracking-tight mb-2 text-text-main">{doc.filename}</h4>
-                      <div className="flex items-center gap-4">
-                         <span className="px-3 py-1 bg-primary/10 text-primary text-[10px] font-black rounded-full border border-primary/20 uppercase tracking-widest">{doc.status}</span>
-                         <span className="text-[10px] text-text-muted uppercase font-black tracking-[0.2em] opacity-60">{new Date(doc.created_at).toLocaleDateString()}</span>
+          {/* Clinical Documents List */}
+          <div className="bg-surface border border-border-main rounded-2xl p-6 sm:p-8 shadow-sm">
+            <h3 className="font-heading text-lg font-black text-text-main mb-4 flex items-center gap-2">
+              <FileText size={18} className="text-secondary" />
+              Ingested Clinical Documents ({docs.length})
+            </h3>
+            {docs.length > 0 ? (
+              <div className="space-y-3">
+                {docs.map((doc) => (
+                  <div key={doc.id} className="p-4 bg-background border border-border-main rounded-xl flex items-center justify-between hover:border-secondary/30 transition-all">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2.5 bg-secondary/10 rounded-lg text-secondary">
+                        <FileText size={18} />
                       </div>
-                      {doc.summary && <p className="text-sm text-text-muted mt-3 font-bold italic leading-relaxed">"{doc.summary}"</p>}
+                      <div>
+                        <p className="font-bold text-sm text-text-main">{doc.filename}</p>
+                        <p className="text-[11px] text-text-muted mt-0.5">
+                          Status: <span className="text-secondary font-semibold uppercase">{doc.status}</span>
+                        </p>
+                      </div>
                     </div>
+                    <span className="px-3 py-1 bg-secondary/10 text-secondary text-[10px] font-bold rounded-full border border-secondary/20 uppercase tracking-wider">
+                      RAG Ready
+                    </span>
                   </div>
-                  <motion.button 
-                    whileHover={{ scale: 1.1 }}
-                    className="p-4 bg-surface hover:bg-primary text-text-muted hover:text-white rounded-2xl transition-all shadow-sm border border-transparent hover:border-primary/20"
-                  >
-                    <Download size={24} />
-                  </motion.button>
-                </motion.div>
-              )) : (
-                <div className="p-20 text-center text-text-muted font-black uppercase tracking-[0.4em] text-sm italic opacity-30 italic">NO METADATA BLOCKS DETECTED</div>
-              )}
-            </div>
-          </motion.div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-xs text-text-muted font-medium py-4 text-center">No clinical text documents ingested yet.</p>
+            )}
+          </div>
+
+          {/* Medical Images List */}
+          <div className="bg-surface border border-border-main rounded-2xl p-6 sm:p-8 shadow-sm">
+            <h3 className="font-heading text-lg font-black text-text-main mb-4 flex items-center gap-2">
+              <ImageIcon size={18} className="text-secondary" />
+              Medical Imaging Studies ({images.length})
+            </h3>
+            {images.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {images.map((img) => (
+                  <div key={img.id} className="p-4 bg-background border border-border-main rounded-xl space-y-2">
+                    <div className="flex items-center gap-2 text-text-main font-bold text-xs">
+                      <ImageIcon size={15} className="text-secondary" />
+                      <span className="truncate">{img.filename}</span>
+                    </div>
+                    {img.caption && (
+                      <p className="text-xs text-text-muted font-medium italic">"{img.caption}"</p>
+                    )}
+                    <span className="inline-block px-2.5 py-0.5 bg-secondary/10 text-secondary text-[10px] font-bold rounded-md">
+                      Modal Context Indexed
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-xs text-text-muted font-medium py-4 text-center">No diagnostic imaging files uploaded.</p>
+            )}
+          </div>
         </div>
 
-        <div className="space-y-10 relative z-10">
-          {/* Admin Panel */}
+        {/* Right Sidebar: Practitioner Access Control (Admin) & Assistant Shortcut */}
+        <div className="space-y-6">
           {isAdmin && (
-            <motion.div 
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 }}
-              className="bg-surface border border-subtle rounded-[3rem] p-10 space-y-8 shadow-2xl relative overflow-hidden"
-            >
-              <div className="absolute top-0 right-0 p-6 opacity-5 pointer-events-none">
-                <FolderLock size={120} />
-              </div>
-              <h3 className="text-2xl font-black flex items-center gap-4">
-                <ShieldCheck size={32} className="text-emerald-500" />
-                RBAC Control 🛡️
+            <div className="bg-surface border border-border-main rounded-2xl p-6 shadow-sm space-y-4">
+              <h3 className="font-heading text-base font-black text-text-main flex items-center gap-2">
+                <FolderLock size={18} className="text-secondary" />
+                Provision Clinical Access
               </h3>
-              <p className="text-sm text-text-muted font-bold leading-relaxed opacity-70 italic shadow-inner bg-emerald-500/[0.03] p-4 rounded-2xl border border-emerald-500/10">
-                Grant specialized clinical access to authorized practitioners. Horizontal scaling of peer review permissions.
+              <p className="text-xs text-text-muted font-medium">
+                Grant attending clinicians access to this patient chart.
               </p>
-              
-              <form onSubmit={handleGrantAccess} className="p-2 space-y-6">
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.3em] ml-1">Attending Practitioner</label>
-                  <select
-                    value={grantUserId}
-                    onChange={(e) => setGrantUserId(e.target.value)}
-                    className="w-full bg-background/50 border border-subtle rounded-2xl px-6 py-4 text-text-main focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all font-black appearance-none cursor-pointer shadow-sm"
-                  >
-                    <option value="">SCANNING FOR STAFF...</option>
-                    {users.map(u => (
-                      <option key={u.id} value={u.id}>{u.full_name || u.email} [{u.role.toUpperCase()}]</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.3em] ml-1">Permission Level</label>
-                  <select
-                    value={grantLevel}
-                    onChange={(e) => setGrantLevel(e.target.value)}
-                    className="w-full bg-background/50 border border-subtle rounded-2xl px-6 py-4 text-text-main focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all font-black appearance-none cursor-pointer shadow-sm"
-                  >
-                    <option value="read">READ_ONLY::OBSERVER</option>
-                    <option value="write">READ_WRITE::AUTHOR</option>
-                  </select>
-                </div>
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  type="submit"
-                  disabled={isGranting || !grantUserId}
-                  className="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-5 rounded-[2.5rem] font-black transition-all shadow-2xl shadow-emerald-600/30 disabled:opacity-50 mt-4 uppercase tracking-[0.2em] text-xs"
+              <form onSubmit={handleGrantAccess} className="space-y-3">
+                <select
+                  value={grantUserId}
+                  onChange={(e) => setGrantUserId(e.target.value)}
+                  className="w-full bg-surface border border-border-main rounded-xl px-3 py-2 text-text-main text-xs font-medium focus:ring-2 focus:ring-secondary/40 focus:border-secondary"
+                  required
                 >
-                  {isGranting ? 'PROVISIONING...' : 'UPGRADE PERMISSIONS'}
-                </motion.button>
+                  <option value="">Select Practitioner...</option>
+                  {users.map((u) => (
+                    <option key={u.id} value={u.id}>{u.full_name} ({u.role})</option>
+                  ))}
+                </select>
+
+                <select
+                  value={grantLevel}
+                  onChange={(e) => setGrantLevel(e.target.value)}
+                  className="w-full bg-surface border border-border-main rounded-xl px-3 py-2 text-text-main text-xs font-medium focus:ring-2 focus:ring-secondary/40 focus:border-secondary"
+                >
+                  <option value="read">Read Only</option>
+                  <option value="write">Read & Write</option>
+                </select>
+
+                <button
+                  type="submit"
+                  disabled={isGranting}
+                  className="w-full bg-[#0b1f33] hover:bg-[#16324f] dark:bg-secondary dark:hover:bg-secondary-light text-white py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all disabled:opacity-50 cursor-pointer"
+                >
+                  {isGranting ? 'Granting...' : 'Authorize Clinician'}
+                </button>
               </form>
-            </motion.div>
+            </div>
           )}
 
-          <motion.div 
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.4 }}
-            className="bg-surface border border-subtle rounded-[3rem] p-10 shadow-2xl group cursor-default"
-          >
-            <h3 className="text-2xl font-black mb-8 flex items-center gap-4">
-               <Activity size={24} className="text-primary animate-pulse" />
-               Chart Pulse 🤖
-            </h3>
-            <div className="space-y-6">
-              <div className="p-6 bg-primary/[0.03] rounded-3xl border border-primary/10 shadow-inner group-hover:bg-primary/[0.05] transition-all">
-                <p className="text-sm text-text-muted font-bold leading-relaxed italic opacity-80">
-                   <span className="text-primary">"</span>{notes || "Awaiting clinical synthesis. Neural network initialized for this sequence."}<span className="text-primary">"</span>
-                </p>
-              </div>
-              <motion.button 
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                onClick={() => navigate('/assistant')}
-                className="w-full flex items-center justify-center gap-4 p-5 bg-gradient-to-r from-primary to-secondary text-white rounded-[2rem] transition-all font-black shadow-2xl shadow-primary/20 uppercase tracking-[0.2em] text-[10px]"
-              >
-                Injest Into Med-Gemini
-                <ChevronRight size={18} />
-              </motion.button>
-            </div>
-          </motion.div>
-
-          <motion.div 
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5 }}
-            className="bg-surface border border-subtle rounded-[3rem] p-10 shadow-2xl"
-          >
-             <h3 className="text-[10px] font-black text-text-muted uppercase tracking-[0.4em] mb-10">Sequence Compliance</h3>
-             <div className="space-y-8">
-                <div className="flex items-center justify-between">
-                   <div className="flex gap-4 items-center">
-                      <div className="w-4 h-4 bg-emerald-500 rounded-full shadow-lg shadow-emerald-500/50 flex items-center justify-center">
-                         <div className="w-1.5 h-1.5 bg-white rounded-full" />
-                      </div>
-                      <span className="text-xs font-black tracking-widest text-text-main opacity-80 uppercase">Integrity Hash</span>
-                   </div>
-                   <span className="text-[10px] text-emerald-500 font-black uppercase tracking-widest">VERIFIED</span>
-                </div>
-                <div className="flex items-center justify-between">
-                   <div className="flex gap-4 items-center">
-                      <div className="w-4 h-4 bg-emerald-500 rounded-full shadow-lg shadow-emerald-500/50 flex items-center justify-center">
-                         <div className="w-1.5 h-1.5 bg-white rounded-full" />
-                      </div>
-                      <span className="text-xs font-black tracking-widest text-text-main opacity-80 uppercase">DICOM Compliance</span>
-                   </div>
-                   <span className="text-[10px] text-emerald-500 font-black uppercase tracking-widest">ACTIVE</span>
-                </div>
-                <div className="flex items-center justify-between">
-                   <div className="flex gap-4 items-center">
-                      <div className="w-3 h-3 bg-primary rounded-full animate-ping" />
-                      <span className="text-xs font-black tracking-widest text-text-main opacity-80 uppercase ml-1">RBAC Sync</span>
-                   </div>
-                   <span className="text-[10px] text-primary font-black uppercase tracking-widest">SYNCHING</span>
-                </div>
-             </div>
-          </motion.div>
+          {/* Clinical Assistant Quick Launch */}
+          <div className="bg-gradient-to-br from-[#0b1f33] to-[#496b5a] rounded-2xl p-6 text-white shadow-md space-y-3">
+            <h4 className="font-heading text-lg font-black">Shell Biotech RAG Q&A</h4>
+            <p className="text-xs text-white/85 leading-relaxed font-medium">
+              Query {patient.full_name}'s full chart history, lab findings, and pharmaceutical records using Med-Gemini.
+            </p>
+            <button
+              onClick={() => navigate('/assistant')}
+              className="bg-white text-[#0b1f33] px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-emerald-50 transition-all cursor-pointer"
+            >
+              Consult Assistant
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Upload Modal */}
       <AnimatePresence>
         {isUploadModalOpen && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsUploadModalOpen(false)}
-              className="absolute inset-0 bg-background/80 backdrop-blur-xl"
+              className="absolute inset-0 bg-black/60 backdrop-blur-xs"
             />
             <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 30 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 30 }}
-              className="relative w-full max-w-xl glass-panel rounded-[3.5rem] overflow-hidden shadow-[0_50px_100px_rgba(0,0,0,0.3)] border border-primary/20"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full max-w-md bg-surface border border-border-main rounded-2xl p-6 shadow-2xl relative z-10 space-y-4"
             >
-              <div className="p-10 border-b border-subtle flex items-center justify-between bg-primary/5">
-                <div className="flex items-center gap-5">
-                  <div className="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center text-white shadow-2xl shadow-primary/30">
-                    <Upload size={32} />
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-black">Data Ingestion</h2>
-                    <p className="text-[10px] text-text-muted uppercase tracking-[0.3em] font-black mt-1">Registry Scale Expansion</p>
-                  </div>
-                </div>
-                <button 
-                  onClick={() => setIsUploadModalOpen(false)}
-                  className="p-3 text-text-muted hover:text-current hover:bg-surface rounded-2xl transition-all border border-transparent hover:border-subtle shadow-sm"
-                >
-                  <X size={24} />
+              <div className="flex items-center justify-between pb-3 border-b border-border-main">
+                <h3 className="font-heading text-base font-black text-text-main">Upload Clinical Asset</h3>
+                <button onClick={() => setIsUploadModalOpen(false)} className="text-text-muted hover:text-text-main">
+                  <X size={18} />
                 </button>
               </div>
 
-              <form onSubmit={handleFileUpload} className="p-12 space-y-10">
-                <div className="space-y-6">
-                  <div className="p-12 border-4 border-dashed border-subtle rounded-[2.5rem] text-center space-y-6 hover:border-primary/50 transition-all cursor-pointer relative group bg-surface/30">
-                    <input
-                      type="file"
-                      onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
-                      className="absolute inset-0 opacity-0 cursor-pointer z-10"
-                    />
-                    <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto text-primary group-hover:bg-primary group-hover:text-white transition-all shadow-inner">
-                      <FileText size={40} className="transition-transform group-hover:scale-125" />
-                    </div>
-                    <div className="space-y-2">
-                      <p className="text-xl font-black tracking-tight">{uploadFile ? uploadFile.name : 'Choose Telemetry Unit'}</p>
-                      <p className="text-[10px] text-text-muted uppercase tracking-[0.4em] font-black opacity-50">PDF · DICOM · HASH · IMAGING</p>
-                    </div>
-                  </div>
-
-                  {uploadFile && ['.png', '.jpg', '.jpeg', '.webp', '.dcm'].some(ext => uploadFile.name.toLowerCase().endsWith(ext)) && (
-                    <motion.div 
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      className="space-y-3 pt-4"
-                    >
-                       <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.3em] ml-2">Clinical Orientation Fragment</label>
-                       <textarea
-                         required
-                         value={uploadCaption}
-                         onChange={(e) => setUploadCaption(e.target.value)}
-                         placeholder="Synthesize observation for this fragment..."
-                         rows={4}
-                         className="w-full bg-background/50 border border-subtle rounded-3xl px-6 py-5 text-text-main focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-black resize-none placeholder:text-text-muted/30"
-                       />
-                    </motion.div>
-                  )}
+              <form onSubmit={handleFileUpload} className="space-y-4">
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold text-text-main uppercase tracking-wider">Select File</label>
+                  <input
+                    type="file"
+                    required
+                    onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
+                    className="w-full bg-surface border border-border-main rounded-xl p-2.5 text-xs text-text-main"
+                  />
+                  <p className="text-[10px] text-text-muted">Allowed: PDF, DOCX, TXT, PNG, JPG, WEBP, DCM</p>
                 </div>
 
-                <div className="flex gap-6">
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold text-text-main uppercase tracking-wider">Clinical Caption (Required for scans)</label>
+                  <input
+                    type="text"
+                    value={uploadCaption}
+                    onChange={(e) => setUploadCaption(e.target.value)}
+                    placeholder="e.g. Chest X-Ray PA View - Normal cardiac contour"
+                    className="w-full bg-surface border border-border-main rounded-xl px-3 py-2 text-text-main text-xs focus:ring-2 focus:ring-secondary/40 focus:border-secondary"
+                  />
+                </div>
+
+                <div className="flex justify-end gap-2 pt-2">
                   <button
                     type="button"
                     onClick={() => setIsUploadModalOpen(false)}
-                    className="flex-1 px-8 py-5 rounded-[2.5rem] bg-surface border border-subtle text-text-muted font-black hover:bg-primary/5 transition-all shadow-sm uppercase tracking-widest text-xs"
+                    className="px-4 py-2 text-text-muted hover:text-text-main text-xs font-bold"
                   >
-                    Discard
+                    Cancel
                   </button>
                   <button
                     type="submit"
-                    disabled={isUploading || !uploadFile}
-                    className="flex-[2] bg-primary hover:bg-primary/90 text-white px-8 py-5 rounded-[2.5rem] font-black flex items-center justify-center gap-4 transition-all shadow-2xl shadow-primary/30 disabled:opacity-50"
+                    disabled={isUploading}
+                    className="bg-[#0b1f33] hover:bg-[#16324f] dark:bg-secondary dark:hover:bg-secondary-light text-white px-5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider disabled:opacity-50"
                   >
-                    {isUploading ? (
-                      <>
-                        <div className="w-6 h-6 border-3 border-white/20 border-t-white rounded-full animate-spin" />
-                        Injesting...
-                      </>
-                    ) : (
-                      <>
-                        <CheckCircle2 size={24} />
-                        COMMIT TO REGISTRY
-                      </>
-                    )}
+                    {isUploading ? 'Uploading & Chunking...' : 'Upload Asset'}
                   </button>
                 </div>
               </form>

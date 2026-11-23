@@ -65,8 +65,8 @@ const Patients = () => {
     try {
       const res = await api.post('/api/patients/', {
         full_name: fullName.trim(),
-        external_id: externalId.trim() || `P-${Math.floor(Math.random() * 10000)}`,
-        condition: condition.trim() || 'General Observation',
+        external_id: externalId.trim() || `SB-${Math.floor(Math.random() * 10000)}`,
+        condition: condition.trim() || 'General Clinical Observation',
         gender,
         dob,
         notes: notes.trim()
@@ -81,7 +81,7 @@ const Patients = () => {
       navigate(`/patients/${res.data.id}`);
     } catch (err) {
       console.error(err);
-      alert('Failed to create patient record');
+      alert('Failed to create patient record in registry');
     } finally {
       setIsSaving(false);
     }
@@ -96,70 +96,75 @@ const Patients = () => {
     <motion.div 
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="p-6 md:p-10 space-y-10 relative overflow-hidden pb-20 bg-background text-text-main min-h-screen"
+      className="p-6 md:p-10 space-y-8 relative overflow-hidden pb-20 bg-background text-text-main min-h-screen"
     >
       <div className="absolute top-0 right-0 w-[400px] h-[400px] -mr-32 -mt-20 opacity-10 pointer-events-none">
         <HealthScene type="dna" />
       </div>
 
-      <header className="flex flex-col sm:flex-row sm:items-center justify-between relative z-10 gap-6">
+      <header className="flex flex-col sm:flex-row sm:items-center justify-between relative z-10 gap-5">
         <div>
-          <h1 className="text-3xl font-black tracking-tighter text-text-main">Patient Registry 🗂️</h1>
-          <p className="text-text-muted mt-1 text-sm font-bold">Synthesized clinical charts for authorized staff.</p>
+          <span className="text-[11px] font-bold text-secondary uppercase tracking-widest">Clinical Registry</span>
+          <h1 className="font-heading text-3xl font-black tracking-tight text-text-main mt-0.5">
+            Patient & Healthcare Records
+          </h1>
+          <p className="text-text-muted mt-1 text-xs font-medium">
+            Managed medical charts, pharmaceutical history, and access control for Shell Biotech practitioners.
+          </p>
         </div>
         {isMedicalStaff && (
           <motion.button 
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => setIsAddModalOpen(true)}
-            className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-[2rem] font-black flex items-center justify-center gap-3 transition-all shadow-xl shadow-primary/20"
+            className="w-full sm:w-auto bg-[#0b1f33] hover:bg-[#16324f] dark:bg-secondary dark:hover:bg-secondary-light text-white px-6 py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-sm text-xs uppercase tracking-wider cursor-pointer"
           >
-            <UserPlus size={22} />
-            Draft Chart
+            <UserPlus size={18} />
+            Draft Patient Chart
           </motion.button>
         )}
       </header>
 
-      <div className="flex items-center gap-6 relative z-10">
+      <div className="flex items-center gap-4 relative z-10">
         <div className="relative flex-1 group">
-          <Search className="absolute left-5 top-4 text-text-muted group-focus-within:text-primary transition-colors" size={22} />
+          <Search className="absolute left-4 top-3.5 text-text-muted group-focus-within:text-secondary transition-colors" size={19} />
           <input
             type="text"
-            placeholder="Filter by name or system sequence..."
+            placeholder="Search by patient name, MRN, or clinical ID..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-surface border border-subtle rounded-[2rem] pl-14 pr-6 py-4 text-current focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-bold placeholder:text-text-muted/30 shadow-sm"
+            className="w-full bg-surface border border-border-main rounded-xl pl-12 pr-5 py-3 text-text-main focus:outline-none focus:ring-2 focus:ring-secondary/40 focus:border-secondary transition-all font-medium placeholder:text-text-muted/40 text-sm shadow-xs"
           />
         </div>
-        <button className="bg-surface border border-subtle text-text-muted p-4 rounded-2xl hover:text-primary hover:border-primary/30 transition-all shadow-sm">
-          <Filter size={22} />
+        <button className="bg-surface border border-border-main text-text-muted p-3 rounded-xl hover:text-secondary hover:border-secondary/40 transition-all shadow-xs cursor-pointer">
+          <Filter size={19} />
         </button>
       </div>
 
-      <div className="bg-surface/50 backdrop-blur-3xl border border-subtle rounded-[3rem] overflow-hidden shadow-2xl relative z-10">
+      <div className="bg-surface border border-border-main rounded-2xl overflow-hidden shadow-sm relative z-10">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse min-w-[900px]">
+          <table className="w-full text-left border-collapse min-w-[850px]">
           <thead>
-            <tr className="bg-primary/5 border-b border-subtle">
-              <th className="px-8 py-6 text-[10px] font-black text-text-muted uppercase tracking-[0.3em]">Identity</th>
-              <th className="px-8 py-6 text-[10px] font-black text-text-muted uppercase tracking-[0.3em]">Sequence ID</th>
+            <tr className="bg-secondary/5 border-b border-border-main">
+              <th className="px-6 py-4 text-[10px] font-bold text-text-muted uppercase tracking-[0.16em]">Patient Name</th>
+              <th className="px-6 py-4 text-[10px] font-bold text-text-muted uppercase tracking-[0.16em]">System Identifier</th>
               {isAdmin ? (
-                <th className="px-8 py-6 text-[10px] font-black text-text-muted uppercase tracking-[0.3em]">Attending Physician</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-text-muted uppercase tracking-[0.16em]">Assigned Practitioner</th>
               ) : (
                 <>
-                  <th className="px-8 py-6 text-[10px] font-black text-text-muted uppercase tracking-[0.3em]">Diagnostic Path</th>
-                  <th className="px-8 py-6 text-[10px] font-black text-text-muted uppercase tracking-[0.3em]">Demographics</th>
-                  <th className="px-8 py-6 text-[10px] font-black text-text-muted uppercase tracking-[0.3em]">Temporal Info</th>
-                  <th className="px-8 py-6 text-[10px] font-black text-text-muted uppercase tracking-[0.3em] text-right">Ops</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-text-muted uppercase tracking-[0.16em]">Clinical Condition</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-text-muted uppercase tracking-[0.16em]">Gender</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-text-muted uppercase tracking-[0.16em]">DOB</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-text-muted uppercase tracking-[0.16em] text-right">Actions</th>
                 </>
               )}
             </tr>
           </thead>
-          <tbody className="divide-y divide-subtle">
+          <tbody className="divide-y divide-border-main text-sm">
             {isLoading ? (
               [...Array(5)].map((_, i) => (
                 <tr key={i} className="animate-pulse">
-                  <td colSpan={isAdmin ? 3 : 6} className="px-8 py-10 bg-surface/30"></td>
+                  <td colSpan={isAdmin ? 3 : 6} className="px-6 py-6 bg-surface/50"></td>
                 </tr>
               ))
             ) : filteredPatients.length > 0 ? (
@@ -167,56 +172,53 @@ const Patients = () => {
                 <motion.tr 
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: idx * 0.05 }}
+                  transition={{ delay: idx * 0.04 }}
                   key={patient.id} 
-                  className="hover:bg-primary/5 transition-colors group cursor-default"
+                  className="hover:bg-secondary/5 transition-colors group cursor-default"
                 >
-                  <td className="px-8 py-5">
-                    <Link to={`/patients/${patient.id}`} className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-primary font-black border border-primary/10 shadow-sm group-hover:scale-110 transition-transform">
+                  <td className="px-6 py-4">
+                    <Link to={`/patients/${patient.id}`} className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0b1f33] to-[#496b5a] flex items-center justify-center text-white font-bold shadow-xs group-hover:scale-105 transition-transform text-sm">
                         {(patient.full_name || '?').charAt(0)}
                       </div>
-                      <span className="font-black tracking-tight group-hover:text-primary transition-colors text-lg text-text-main">
+                      <span className="font-bold group-hover:text-secondary transition-colors text-text-main">
                         {patient.full_name}
                       </span>
                     </Link>
                   </td>
-                  <td className="px-8 py-5">
-                    <div className="flex items-center gap-3">
-                       <span className="text-[10px] font-black text-text-muted uppercase tracking-widest">{patient.external_id}</span>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-2">
+                       <span className="text-xs font-mono font-semibold text-text-muted">{patient.external_id}</span>
                        {!isAdmin && patient.can_write && (
-                         <span className="px-2 py-1 bg-primary/10 text-primary text-[8px] font-black rounded-lg border border-primary/20 uppercase tracking-widest animate-pulse">
-                           RWX ACCESS
+                         <span className="px-2 py-0.5 bg-secondary/10 text-secondary text-[9px] font-bold rounded-md border border-secondary/20 uppercase tracking-wider">
+                           Read-Write
                          </span>
                        )}
                     </div>
                   </td>
                   {isAdmin ? (
-                    <td className="px-8 py-5">
-                      <span className="px-4 py-2 bg-primary/10 text-primary text-[10px] font-black rounded-full border border-primary/20 uppercase tracking-widest">
-                        {patient.doctor_assigned || 'QUEUE::EMPTY'}
+                    <td className="px-6 py-4">
+                      <span className="px-3 py-1 bg-secondary/10 text-secondary text-xs font-semibold rounded-full border border-secondary/20">
+                        {patient.doctor_assigned || 'Unassigned'}
                       </span>
                     </td>
                   ) : (
                     <>
-                      <td className="px-8 py-5">
-                        <span className="px-4 py-2 bg-secondary/10 text-secondary text-[10px] font-black rounded-full border border-secondary/20 uppercase tracking-widest">
-                          {patient.condition || 'GENERAL_CARE'}
+                      <td className="px-6 py-4">
+                        <span className="px-3 py-1 bg-secondary/10 text-secondary text-xs font-semibold rounded-full border border-secondary/20">
+                          {patient.condition || 'General Care'}
                         </span>
                       </td>
-                      <td className="px-8 py-5 text-sm font-bold text-text-muted italic">{patient.gender}</td>
-                      <td className="px-8 py-5 text-sm font-bold text-text-muted italic">{patient.dob}</td>
-                      <td className="px-8 py-5 text-right">
-                        <div className="flex items-center justify-end gap-3">
+                      <td className="px-6 py-4 text-xs font-medium text-text-muted">{patient.gender}</td>
+                      <td className="px-6 py-4 text-xs font-medium text-text-muted">{patient.dob || '—'}</td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex items-center justify-end gap-2">
                           <Link 
                             to={`/patients/${patient.id}`}
-                            className="p-3 text-text-muted hover:text-primary hover:bg-primary/10 rounded-2xl transition-all shadow-sm"
+                            className="p-2 text-text-muted hover:text-secondary hover:bg-secondary/10 rounded-lg transition-all"
                           >
-                            <ChevronRight size={20} />
+                            <ChevronRight size={18} />
                           </Link>
-                          <button className="p-3 text-text-muted hover:text-current hover:bg-surface rounded-2xl transition-all shadow-sm">
-                            <MoreHorizontal size={20} />
-                          </button>
                         </div>
                       </td>
                     </>
@@ -225,8 +227,8 @@ const Patients = () => {
               ))
             ) : (
               <tr>
-                <td colSpan={isAdmin ? 3 : 6} className="px-8 py-20 text-center text-text-muted font-black uppercase tracking-[0.4em] text-sm opacity-40">
-                  NO SEQUENCING DATA DETECTED
+                <td colSpan={isAdmin ? 3 : 6} className="px-6 py-16 text-center text-text-muted font-bold uppercase tracking-wider text-xs">
+                  No patient clinical records found matching criteria.
                 </td>
               </tr>
             )}
@@ -238,145 +240,115 @@ const Patients = () => {
       {/* Add Patient Modal */}
       <AnimatePresence>
         {isAddModalOpen && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsAddModalOpen(false)}
-              className="absolute inset-0 bg-background/80 backdrop-blur-xl"
+              className="absolute inset-0 bg-black/60 backdrop-blur-xs"
             />
             <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 30 }}
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 30 }}
-              className="relative w-full max-w-2xl glass-panel rounded-[3.5rem] overflow-hidden shadow-[0_50px_100px_rgba(0,0,0,0.2)] border border-primary/20"
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="w-full max-w-lg bg-surface border border-border-main rounded-2xl p-6 sm:p-8 shadow-2xl relative z-10 max-h-[90vh] overflow-y-auto"
             >
-              <div className="p-10 border-b border-subtle flex items-center justify-between bg-primary/5">
-                <div className="flex items-center gap-5">
-                  <div className="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center text-white shadow-2xl shadow-primary/30">
-                    <UserPlus size={32} />
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-black text-text-main">Provision Chart</h2>
-                    <p className="text-[10px] text-text-muted uppercase tracking-[0.3em] font-black mt-1">Telemetry Initialization</p>
-                  </div>
+              <div className="flex items-center justify-between pb-4 border-b border-border-main mb-5">
+                <div>
+                  <h3 className="font-heading text-lg font-black text-text-main">Draft Clinical Patient Chart</h3>
+                  <p className="text-xs text-text-muted font-medium">Record into Shell Biotech hospital registry</p>
                 </div>
-                <button 
-                  onClick={() => setIsAddModalOpen(false)}
-                  className="p-3 text-text-muted hover:text-current hover:bg-surface rounded-2xl transition-all border border-transparent hover:border-subtle shadow-sm"
-                >
-                  <X size={24} />
+                <button onClick={() => setIsAddModalOpen(false)} className="p-1.5 text-text-muted hover:text-text-main rounded-lg cursor-pointer">
+                  <X size={18} />
                 </button>
               </div>
 
-              <form onSubmit={handleAddPatient} className="p-12 space-y-8">
-                <div className="grid grid-cols-2 gap-8">
-                  <div className="space-y-2 col-span-2">
-                    <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Full Legal Clinical Name</label>
-                    <div className="relative group">
-                      <UserPlus className="absolute left-5 top-4 text-text-muted group-focus-within:text-primary transition-colors" size={20} />
-                      <input
-                        type="text"
-                        required
-                        value={fullName}
-                        onChange={(e) => setFullName(e.target.value)}
-                        placeholder="Johnathan Doe"
-                        className="w-full bg-surface/50 border border-subtle rounded-2xl px-6 py-4 pl-14 text-current focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-black placeholder:text-text-muted/30"
-                      />
-                    </div>
-                  </div>
+              <form onSubmit={handleAddPatient} className="space-y-4">
+                <div className="space-y-1">
+                  <label className="text-[11px] font-bold text-text-main uppercase tracking-wider">Patient Full Name *</label>
+                  <input
+                    type="text"
+                    required
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder="e.g. Ramesh Reddy"
+                    className="w-full bg-surface border border-border-main rounded-xl px-3.5 py-2.5 text-text-main focus:outline-none focus:ring-2 focus:ring-secondary/40 focus:border-secondary transition-all font-medium text-sm"
+                  />
+                </div>
 
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Sequence / MRN UID</label>
-                    <div className="relative group">
-                      <Fingerprint className="absolute left-5 top-4 text-text-muted group-focus-within:text-primary transition-colors" size={20} />
-                      <input
-                        type="text"
-                        value={externalId}
-                        onChange={(e) => setExternalId(e.target.value)}
-                        placeholder="P-SEQUENCE (Auto)"
-                        className="w-full bg-surface/50 border border-subtle rounded-2xl px-6 py-4 pl-14 text-current focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-black placeholder:text-text-muted/30"
-                      />
-                    </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold text-text-main uppercase tracking-wider">MRN / Sequence ID</label>
+                    <input
+                      type="text"
+                      value={externalId}
+                      onChange={(e) => setExternalId(e.target.value)}
+                      placeholder="SB-1049"
+                      className="w-full bg-surface border border-border-main rounded-xl px-3.5 py-2.5 text-text-main focus:outline-none focus:ring-2 focus:ring-secondary/40 focus:border-secondary transition-all font-medium text-sm"
+                    />
                   </div>
-
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Diagnostic Path</label>
-                    <div className="relative group">
-                      <Activity className="absolute left-5 top-4 text-text-muted group-focus-within:text-primary transition-colors" size={20} />
-                      <input
-                        type="text"
-                        value={condition}
-                        onChange={(e) => setCondition(e.target.value)}
-                        placeholder="Hypertension / Core"
-                        className="w-full bg-surface/50 border border-subtle rounded-2xl px-6 py-4 pl-14 text-current focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-black placeholder:text-text-muted/30"
-                      />
-                    </div>
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold text-text-main uppercase tracking-wider">Gender</label>
+                    <select
+                      value={gender}
+                      onChange={(e) => setGender(e.target.value)}
+                      className="w-full bg-surface border border-border-main rounded-xl px-3.5 py-2.5 text-text-main focus:outline-none focus:ring-2 focus:ring-secondary/40 focus:border-secondary transition-all font-medium text-sm"
+                    >
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </select>
                   </div>
+                </div>
 
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Temporal Birth Origin</label>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold text-text-main uppercase tracking-wider">Primary Condition</label>
+                    <input
+                      type="text"
+                      value={condition}
+                      onChange={(e) => setCondition(e.target.value)}
+                      placeholder="e.g. Hypertension, Diabetes"
+                      className="w-full bg-surface border border-border-main rounded-xl px-3.5 py-2.5 text-text-main focus:outline-none focus:ring-2 focus:ring-secondary/40 focus:border-secondary transition-all font-medium text-sm"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold text-text-main uppercase tracking-wider">Date of Birth</label>
                     <input
                       type="date"
                       value={dob}
                       onChange={(e) => setDob(e.target.value)}
-                      className="w-full bg-surface/50 border border-subtle rounded-2xl px-6 py-4 text-current focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-black"
+                      className="w-full bg-surface border border-border-main rounded-xl px-3.5 py-2.5 text-text-main focus:outline-none focus:ring-2 focus:ring-secondary/40 focus:border-secondary transition-all font-medium text-sm"
                     />
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Biological Marker</label>
-                    <select
-                      value={gender}
-                      onChange={(e) => setGender(e.target.value)}
-                      className="w-full bg-surface/50 border border-subtle rounded-2xl px-6 py-4 text-current focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-black appearance-none cursor-pointer"
-                    >
-                      <option value="Male">Male Origin</option>
-                      <option value="Female">Female Origin</option>
-                      <option value="Other">Non-binary / Other</option>
-                    </select>
-                  </div>
-
-                  <div className="space-y-2 col-span-2">
-                    <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Synthesized Clinical Notes</label>
-                    <div className="relative group">
-                      <FileText className="absolute left-5 top-5 text-text-muted group-focus-within:text-primary transition-colors" size={20} />
-                      <textarea
-                        value={notes}
-                        onChange={(e) => setNotes(e.target.value)}
-                        placeholder="Neural observations & orientation history..."
-                        rows={3}
-                        className="w-full bg-surface/50 border border-subtle rounded-2xl px-6 py-5 pl-14 text-current focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-black resize-none placeholder:text-text-muted/30"
-                      />
-                    </div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-6 pt-8">
+                <div className="space-y-1">
+                  <label className="text-[11px] font-bold text-text-main uppercase tracking-wider">Clinical Notes & Formulations</label>
+                  <textarea
+                    rows={3}
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    placeholder="Patient presentation, therapeutic course, or prescribed formulations..."
+                    className="w-full bg-surface border border-border-main rounded-xl px-3.5 py-2.5 text-text-main focus:outline-none focus:ring-2 focus:ring-secondary/40 focus:border-secondary transition-all font-medium text-sm resize-none"
+                  />
+                </div>
+
+                <div className="pt-3 flex items-center justify-end gap-3">
                   <button
                     type="button"
                     onClick={() => setIsAddModalOpen(false)}
-                    className="flex-1 px-8 py-5 rounded-[2.5rem] bg-surface border border-subtle text-text-muted font-black hover:bg-primary/5 transition-all shadow-sm uppercase tracking-widest text-xs"
+                    className="px-4 py-2.5 text-text-muted hover:text-text-main text-xs font-bold uppercase tracking-wider"
                   >
-                    Abort
+                    Cancel
                   </button>
                   <button
                     type="submit"
-                    disabled={isSaving || !fullName.trim()}
-                    className="flex-[2] bg-primary hover:bg-primary/90 text-white px-8 py-5 rounded-[2.5rem] font-black flex items-center justify-center gap-3 transition-all shadow-2xl shadow-primary/30 disabled:opacity-50"
+                    disabled={isSaving}
+                    className="bg-[#0b1f33] hover:bg-[#16324f] dark:bg-secondary dark:hover:bg-secondary-light text-white px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all disabled:opacity-50"
                   >
-                    {isSaving ? (
-                      <>
-                        <div className="w-6 h-6 border-3 border-white/20 border-t-white rounded-full animate-spin" />
-                        Writing to Chain...
-                      </>
-                    ) : (
-                      <>
-                        <CheckCircle2 size={24} />
-                        COMMIT CHART
-                      </>
-                    )}
+                    {isSaving ? 'Creating...' : 'Register Patient'}
                   </button>
                 </div>
               </form>

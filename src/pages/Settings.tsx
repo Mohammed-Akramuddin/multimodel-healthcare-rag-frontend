@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { 
-  User, 
-  Mail, 
-  Shield, 
-  Lock, 
-  Bell, 
-  Moon, 
+import {
+  User,
+  Mail,
+  Shield,
+  Lock,
+  Bell,
+  Moon,
   Smartphone,
   Globe,
   Save,
-  CheckCircle2
+  CheckCircle2,
+  Building2,
+  MapPin
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '../lib/utils';
@@ -24,146 +26,150 @@ const Settings = () => {
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
-    // Simulate API call
     setTimeout(() => {
       setIsSaving(false);
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 3000);
-    }, 1000);
+    }, 800);
   };
 
   return (
-    <div className="p-4 md:p-8 space-y-8 pb-20 max-w-4xl mx-auto bg-background text-text-main min-h-screen">
+    <div className="p-6 md:p-10 space-y-8 pb-20 max-w-4xl mx-auto bg-background text-text-main min-h-screen">
       <header>
-        <h1 className="text-3xl font-black text-text-main tracking-tight">System Settings ⚙️</h1>
-        <p className="text-text-muted mt-2 font-bold">Manage your clinical profile and application preferences.</p>
+        <div className="flex items-center gap-2">
+          <span className="text-[11px] font-bold text-secondary uppercase tracking-widest">Configuration</span>
+          <span className="w-1 h-1 rounded-full bg-text-muted/30" />
+          <span className="text-[11px] font-medium text-text-muted">Practitioner Account</span>
+        </div>
+        <h1 className="font-heading text-2xl md:text-3xl font-black text-text-main tracking-tight mt-0.5">
+          Practitioner Profile & System Settings
+        </h1>
+        <p className="text-text-muted mt-1 text-xs font-medium">Manage clinical identification, regional preferences, and security settings.</p>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {/* Sidebar Tabs (Visual) */}
-        <div className="space-y-2">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Navigation Sidebar */}
+        <div className="space-y-1.5">
           {[
-            { name: 'Profile', icon: User, active: true },
-            { name: 'Security', icon: Lock, active: false },
+            { name: 'Profile Identity', icon: User, active: true },
+            { name: 'Security & Access', icon: Lock, active: false },
             { name: 'Notifications', icon: Bell, active: false },
-            { name: 'Appearance', icon: Moon, active: false },
+            { name: 'Display Theme', icon: Moon, active: false },
           ].map((tab) => (
             <button
               key={tab.name}
               className={cn(
-                "w-full flex items-center gap-3 px-4 py-3 rounded-2xl font-black transition-all text-sm uppercase tracking-widest",
-                tab.active 
-                  ? "bg-primary text-white shadow-lg shadow-primary/20" 
-                  : "text-text-muted hover:bg-primary/5 hover:text-primary"
+                "w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl font-bold transition-all text-xs uppercase tracking-wider text-left cursor-pointer",
+                tab.active
+                  ? "bg-[#0b1f33] text-white shadow-xs dark:bg-secondary"
+                  : "text-text-muted hover:bg-secondary/10 hover:text-secondary"
               )}
             >
-              <tab.icon size={18} />
+              <tab.icon size={16} />
               {tab.name}
             </button>
           ))}
         </div>
 
         {/* Content Area */}
-        <div className="md:col-span-2 space-y-8">
-          <motion.form 
-            initial={{ opacity: 0, x: 20 }}
+        <div className="md:col-span-2 space-y-6">
+          <motion.form
+            initial={{ opacity: 0, x: 15 }}
             animate={{ opacity: 1, x: 0 }}
             onSubmit={handleSave}
-            className="bg-surface border border-subtle rounded-[2.5rem] p-8 shadow-2xl space-y-6"
+            className="bg-surface border border-border-main rounded-2xl p-6 sm:p-8 shadow-xs space-y-5"
           >
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-2xl font-black text-white shadow-xl">
-                {user?.full_name?.charAt(0) || 'U'}
+            <div className="flex items-center gap-3.5 mb-2">
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#0b1f33] to-[#496b5a] flex items-center justify-center text-lg font-black text-white shadow-xs">
+                {user?.full_name?.charAt(0) || 'S'}
               </div>
               <div>
-                <h3 className="text-xl font-black text-text-main">Clinical Profile</h3>
-                <p className="text-xs text-text-muted font-black uppercase tracking-widest mt-1">Basic Identity Information</p>
+                <h3 className="font-heading text-base font-bold text-text-main">Shell Biotech Practitioner Record</h3>
+                <p className="text-[11px] text-secondary font-semibold uppercase tracking-wider mt-0.5">Verified Medical Staff</p>
               </div>
             </div>
 
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Full Legal Name</label>
+            <div className="space-y-3.5 text-xs">
+              <div className="space-y-1">
+                <label className="text-[11px] font-bold text-text-main uppercase tracking-wider">Full Legal Name</label>
                 <div className="relative group">
-                  <User size={18} className="absolute left-4 top-3.5 text-text-muted group-focus-within:text-primary transition-colors" />
+                  <User size={16} className="absolute left-3.5 top-3 text-text-muted group-focus-within:text-secondary transition-colors" />
                   <input
                     type="text"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="w-full bg-background border border-subtle rounded-2xl px-4 py-3.5 pl-12 text-text-main focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-black shadow-inner"
+                    className="w-full bg-background border border-border-main rounded-xl px-3.5 py-2.5 pl-10 text-text-main focus:outline-none focus:ring-2 focus:ring-secondary/40 focus:border-secondary font-medium"
                   />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] ml-1">Email Address</label>
+              <div className="space-y-1">
+                <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider">Registered Email</label>
                 <div className="relative group">
-                  <Mail size={18} className="absolute left-4 top-3.5 text-gray-600" />
+                  <Mail size={16} className="absolute left-3.5 top-3 text-text-muted" />
                   <input
                     type="email"
                     disabled
                     value={user?.email || ''}
-                    className="w-full bg-black/20 border border-white/5 rounded-2xl px-4 py-3.5 pl-12 text-gray-500 cursor-not-allowed font-bold"
+                    className="w-full bg-background/50 border border-border-main rounded-xl px-3.5 py-2.5 pl-10 text-text-muted cursor-not-allowed font-medium"
                   />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] ml-1">Assigned Role</label>
+              <div className="space-y-1">
+                <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider">Clinical Role</label>
                 <div className="relative group">
-                  <Shield size={18} className="absolute left-4 top-3.5 text-gray-600" />
+                  <Shield size={16} className="absolute left-3.5 top-3 text-text-muted" />
                   <input
                     type="text"
                     disabled
                     value={user?.role?.toUpperCase() || ''}
-                    className="w-full bg-black/20 border border-white/5 rounded-2xl px-4 py-3.5 pl-12 text-gray-500 cursor-not-allowed font-bold tracking-widest"
+                    className="w-full bg-background/50 border border-border-main rounded-xl px-3.5 py-2.5 pl-10 text-text-muted cursor-not-allowed font-medium tracking-wider"
                   />
                 </div>
               </div>
             </div>
 
-            <div className="pt-4 flex items-center justify-between">
-              <p className="text-[10px] text-gray-600 font-bold uppercase tracking-widest">
-                Changes persist across all clinical endpoints.
+            <div className="pt-2 flex items-center justify-between">
+              <p className="text-[10px] text-text-muted font-medium">
+                Identity details certified with Shell Biotech network.
               </p>
               <button
                 type="submit"
                 disabled={isSaving}
-                className="bg-primary hover:bg-primary/90 text-white px-8 py-3.5 rounded-2xl font-black flex items-center gap-2 transition-all shadow-lg shadow-primary/20 disabled:opacity-50"
+                className="bg-[#0b1f33] hover:bg-[#16324f] dark:bg-secondary dark:hover:bg-secondary-light text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-xs text-xs uppercase tracking-wider disabled:opacity-50 cursor-pointer"
               >
                 {isSaving ? (
-                  <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                  <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
                 ) : showSuccess ? (
-                  <CheckCircle2 size={18} />
+                  <CheckCircle2 size={16} />
                 ) : (
-                  <Save size={18} />
+                  <Save size={16} />
                 )}
-                {isSaving ? 'Syncing...' : showSuccess ? 'Profile Updated' : 'Save Profile'}
+                {isSaving ? 'Saving...' : showSuccess ? 'Saved' : 'Save Profile'}
               </button>
             </div>
           </motion.form>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="bg-surface border border-subtle rounded-[2rem] p-6 space-y-4 shadow-lg">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-orange-500/10 rounded-xl">
-                  <Smartphone size={20} className="text-orange-400" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="bg-surface border border-border-main rounded-xl p-5 space-y-2 shadow-xs">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 bg-secondary/10 rounded-lg text-secondary">
+                  <Smartphone size={16} />
                 </div>
-                <h4 className="text-text-main font-black text-sm">Device Access</h4>
+                <h4 className="font-heading text-text-main font-bold text-xs uppercase tracking-wider">Active Device</h4>
               </div>
-              <p className="text-xs text-text-muted font-bold">Currently active on this Chrome browser session.</p>
-              <button className="text-[10px] font-black text-primary uppercase tracking-widest hover:text-primary/70">Remote Sign Out</button>
+              <p className="text-xs text-text-muted font-medium">Verified Chrome practitioner session active.</p>
             </div>
-            
-            <div className="bg-surface border border-subtle rounded-[2rem] p-6 space-y-4 shadow-lg">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-secondary/10 rounded-xl">
-                  <Globe size={20} className="text-secondary" />
+
+            <div className="bg-surface border border-border-main rounded-xl p-5 space-y-2 shadow-xs">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 bg-secondary/10 rounded-lg text-secondary">
+                  <MapPin size={16} />
                 </div>
-                <h4 className="text-text-main font-black text-sm">Locale & Time</h4>
+                <h4 className="font-heading text-text-main font-bold text-xs uppercase tracking-wider">Hub Location</h4>
               </div>
-              <p className="text-xs text-text-muted font-bold">UTC+05:30 (Asia/Kolkata) based on clinical location.</p>
-              <button className="text-[10px] font-black text-primary uppercase tracking-widest hover:text-primary/70">Sync with GPS</button>
+              <p className="text-xs text-text-muted font-medium">Hyderabad, Telangana (IST UTC+05:30).</p>
             </div>
           </div>
         </div>

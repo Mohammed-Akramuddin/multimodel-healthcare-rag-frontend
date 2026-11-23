@@ -6,14 +6,12 @@ import {
   Filter, 
   Search, 
   ShieldCheck, 
-  AlertCircle,
-  Database,
-  ArrowRight,
-  User as UserIcon,
-  Tag
+  AlertCircle, 
+  Database, 
+  ArrowRight, 
+  Tag 
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { cn } from '../lib/utils';
 
 interface AuditLog {
   id: number;
@@ -27,6 +25,7 @@ interface AuditLog {
 
 const Audit = () => {
   const [logs, setLogs] = useState<AuditLog[]>([]);
+  const [search, setSearch] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -48,126 +47,120 @@ const Audit = () => {
     return new Date(iso).toLocaleString();
   };
 
+  const filteredLogs = logs.filter(l => 
+    l.action.toLowerCase().includes(search.toLowerCase()) ||
+    l.resource_type.toLowerCase().includes(search.toLowerCase()) ||
+    (l.details?.email && l.details.email.toLowerCase().includes(search.toLowerCase()))
+  );
+
   if (isLoading) {
     return (
-      <div className="p-8 space-y-8 animate-pulse text-gray-500">
-        <div className="h-10 w-48 bg-white/5 rounded-xl ml-2 mb-4" />
-        <div className="space-y-4">
-          {[...Array(8)].map((_, i) => <div key={i} className="h-16 bg-white/5 rounded-2xl" />)}
+      <div className="p-6 md:p-10 space-y-6 animate-pulse text-text-muted">
+        <div className="h-8 w-56 bg-surface rounded-xl mb-4" />
+        <div className="space-y-3">
+          {[...Array(6)].map((_, i) => <div key={i} className="h-14 bg-surface rounded-xl" />)}
         </div>
       </div>
     );
   }
 
   return (
-    <div className="p-4 md:p-8 space-y-8 h-screen md:h-[calc(100vh-2rem)] flex flex-col pb-24 md:pb-0 bg-background text-text-main">
+    <div className="p-6 md:p-10 space-y-6 h-screen md:h-[calc(100vh-2rem)] flex flex-col pb-24 md:pb-0 bg-background text-text-main">
       <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-black text-text-main tracking-tight flex items-center gap-3">
-            <Activity className="text-primary" size={32} />
-            Security Audit Logs 🔍
+          <span className="text-[11px] font-bold text-secondary uppercase tracking-widest">Compliance Vault</span>
+          <h1 className="font-heading text-2xl md:text-3xl font-black text-text-main tracking-tight mt-0.5">
+            Security & Clinical Access Audit
           </h1>
-          <p className="text-text-muted mt-1 text-sm font-bold">Real-time tracking of all system actions and data access events.</p>
+          <p className="text-text-muted mt-1 text-xs font-medium">Real-time immutable log of all clinical chart accesses and data modifications.</p>
         </div>
-        <div className="flex items-center gap-3 self-end sm:self-auto">
-          <div className="bg-white/5 border border-white/10 px-4 py-2 rounded-xl flex items-center gap-2 text-[10px] font-bold text-gray-400">
-            <ShieldCheck size={14} className="text-green-500" />
-            Compliance Status: Healthy
-          </div>
+        <div className="flex items-center gap-2 self-end sm:self-auto bg-surface border border-border-main px-3.5 py-2 rounded-xl text-xs font-bold text-secondary shadow-xs">
+          <ShieldCheck size={16} className="text-secondary" />
+          <span>Compliance Status: Verified Healthy</span>
         </div>
       </header>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
         <div className="relative flex-1">
-          <Search className="absolute left-4 top-3.5 text-text-muted" size={20} />
+          <Search className="absolute left-3.5 top-3 text-text-muted" size={18} />
           <input
             type="text"
-            placeholder="Search activity logs..."
-            className="w-full bg-surface border border-subtle rounded-2xl pl-12 pr-4 py-3.5 text-text-main focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-bold placeholder:text-text-muted/30 shadow-inner"
+            placeholder="Search activity events, emails, or resources..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full bg-surface border border-border-main rounded-xl pl-11 pr-4 py-2.5 text-xs sm:text-sm text-text-main focus:outline-none focus:ring-2 focus:ring-secondary/40 focus:border-secondary transition-all font-medium placeholder:text-text-muted/40 shadow-xs"
           />
         </div>
-        <button className="bg-surface border border-subtle text-text-muted p-3.5 rounded-2xl hover:text-primary hover:border-primary/20 transition-all shadow-md">
-          <Filter size={20} />
+        <button className="bg-surface border border-border-main text-text-muted p-2.5 rounded-xl hover:text-secondary hover:border-secondary/40 transition-all shadow-xs cursor-pointer">
+          <Filter size={18} />
         </button>
       </div>
 
-      <div className="bg-surface/80 backdrop-blur-xl border border-subtle rounded-3xl overflow-hidden flex-1 flex flex-col shadow-xl min-h-0">
-        <div className="overflow-auto flex-1 scrollbar-thin scrollbar-thumb-white/10 custom-scrollbar">
-          <table className="w-full text-left border-collapse min-w-[700px]">
+      <div className="bg-surface border border-border-main rounded-2xl overflow-hidden flex-1 flex flex-col shadow-xs min-h-0">
+        <div className="overflow-auto flex-1">
+          <table className="w-full text-left border-collapse min-w-[700px] text-xs">
             <thead className="sticky top-0 bg-surface z-10">
-              <tr className="bg-primary/5 border-b border-subtle">
-                <th className="px-6 py-4 text-xs font-black text-text-muted uppercase tracking-widest">Action Event</th>
-                <th className="px-6 py-4 text-xs font-black text-text-muted uppercase tracking-widest">Resource Type</th>
-                <th className="px-6 py-4 text-xs font-black text-text-muted uppercase tracking-widest">Timestamp</th>
-                <th className="px-6 py-4 text-xs font-black text-text-muted uppercase tracking-widest">Trace ID</th>
+              <tr className="bg-secondary/5 border-b border-border-main">
+                <th className="px-5 py-3.5 font-bold text-text-muted uppercase tracking-wider">Action Event</th>
+                <th className="px-5 py-3.5 font-bold text-text-muted uppercase tracking-wider">Resource Type</th>
+                <th className="px-5 py-3.5 font-bold text-text-muted uppercase tracking-wider">Timestamp</th>
+                <th className="px-5 py-3.5 font-bold text-text-muted uppercase tracking-wider">Trace ID</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
-              {logs.length > 0 ? (
-                logs.map((log, i) => (
-                  <motion.tr 
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.02 }}
-                    key={log.id} 
-                    className="hover:bg-white/5 transition-colors group cursor-default"
-                  >
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400 font-bold border border-white/5">
-                          <Activity size={14} />
+            <tbody className="divide-y divide-border-main">
+              {filteredLogs.length > 0 ? (
+                filteredLogs.map((log) => (
+                  <tr key={log.id} className="hover:bg-secondary/5 transition-colors group cursor-default">
+                    <td className="px-5 py-3.5">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-7 h-7 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary font-bold">
+                          <Activity size={13} />
                         </div>
                         <div>
-                          <p className="text-sm font-black text-text-main group-hover:text-primary transition-colors uppercase tracking-tight">
+                          <p className="font-bold text-text-main group-hover:text-secondary transition-colors uppercase tracking-tight">
                             {log.action.replace(/_/g, ' ')}
                           </p>
                           {log.details?.email && (
-                           <p className="text-[10px] text-text-muted font-mono">{log.details.email}</p>
+                            <p className="text-[10px] text-text-muted font-mono">{log.details.email}</p>
                           )}
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <Tag size={12} className="text-gray-500" />
-                        <span className="text-xs text-text-muted group-hover:text-text-main transition-colors">
+                    <td className="px-5 py-3.5">
+                      <div className="flex items-center gap-1.5 text-text-muted">
+                        <Tag size={12} className="text-secondary" />
+                        <span className="font-medium">
                           {log.resource_type} {log.resource_id ? `(#${log.resource_id})` : ''}
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2 text-text-muted group-hover:text-text-main transition-colors">
+                    <td className="px-5 py-3.5">
+                      <div className="flex items-center gap-1.5 text-text-muted">
                         <Clock size={12} />
-                        <span className="text-[11px] font-medium">{formatTime(log.created_at)}</span>
+                        <span>{formatTime(log.created_at)}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-1.5 opacity-30 group-hover:opacity-100 transition-all">
-                        <span className="text-[10px] font-mono text-text-muted px-2 py-0.5 bg-black/40 rounded-md border border-white/5">
-                          EVT-9512-{log.id}
-                        </span>
-                        <ArrowRight size={10} className="text-primary" />
-                      </div>
+                    <td className="px-5 py-3.5">
+                      <span className="font-mono text-[10px] text-text-muted px-2 py-0.5 bg-background rounded-md border border-border-main">
+                        SB-LOG-{log.id}
+                      </span>
                     </td>
-                  </motion.tr>
+                  </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={4} className="px-6 py-24 text-center ">
-                    <div className="flex flex-col items-center gap-4 opacity-50">
-                      <AlertCircle size={48} className="text-gray-500" />
-                      <p className="text-sm italic font-medium">No activity records found in the audit vault.</p>
-                    </div>
+                  <td colSpan={4} className="px-5 py-16 text-center text-text-muted font-bold uppercase tracking-wider text-xs">
+                    No matching audit records in the registry.
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
         </div>
-        <div className="p-4 bg-black/20 border-t border-white/10 text-center">
-            <p className="text-[10px] text-text-muted font-black uppercase tracking-widest flex items-center justify-center gap-2">
-               <Database size={10} /> Showing latest 50 security events from encrypted logs
-            </p>
+        <div className="p-3 bg-secondary/5 border-t border-border-main text-center">
+          <p className="text-[10px] text-text-muted font-semibold uppercase tracking-wider flex items-center justify-center gap-1.5">
+            <Database size={11} className="text-secondary" /> Shell Biotech Telemetry Vault · Tamper Evident
+          </p>
         </div>
       </div>
     </div>

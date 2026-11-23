@@ -10,7 +10,10 @@ import {
   ChevronRight,
   ShieldCheck,
   Zap,
-  LayoutDashboard
+  Building2,
+  MapPin,
+  Stethoscope,
+  Info
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { 
@@ -59,36 +62,36 @@ const Dashboard = () => {
 
   const statCards = [
     { 
-      name: isPatient ? 'My Records' : 'Total Patients', 
+      name: isPatient ? 'My Health Records' : 'Total Patients Registered', 
       value: stats?.total_patients || 0, 
       icon: Users, 
-      color: 'text-blue-500', 
-      bg: 'bg-blue-500/10',
-      border: 'hover:border-blue-500/30'
+      color: 'text-[#0b1f33] dark:text-[#5b8570]', 
+      bg: 'bg-[#0b1f33]/10 dark:bg-[#5b8570]/20',
+      border: 'hover:border-[#0b1f33]/40 dark:hover:border-[#5b8570]/40'
     },
     { 
-      name: isPatient ? 'My Documents' : 'Clinical Notes', 
+      name: isPatient ? 'My Clinical Documents' : 'Formulations & Clinical Notes', 
       value: stats?.total_documents || 0, 
       icon: FileText, 
-      color: 'text-purple-500', 
-      bg: 'bg-purple-500/10',
-      border: 'hover:border-purple-500/30'
+      color: 'text-[#496b5a]', 
+      bg: 'bg-[#496b5a]/10',
+      border: 'hover:border-[#496b5a]/40'
     },
     { 
-      name: 'Active Sessions', 
+      name: 'Active Clinical Sessions', 
       value: stats?.active_sessions || 0, 
       icon: Activity, 
-      color: 'text-emerald-500', 
-      bg: 'bg-emerald-500/10',
-      border: 'hover:border-emerald-500/30'
+      color: 'text-[#2e6b47]', 
+      bg: 'bg-[#2e6b47]/10',
+      border: 'hover:border-[#2e6b47]/40'
     },
     { 
-      name: 'System Health', 
-      value: '99.9%', 
+      name: 'Institutional Telemetry', 
+      value: '99.98%', 
       icon: ShieldCheck, 
-      color: 'text-rose-500', 
-      bg: 'bg-rose-500/10',
-      border: 'hover:border-rose-500/30'
+      color: 'text-[#1f5582]', 
+      bg: 'bg-[#1f5582]/10',
+      border: 'hover:border-[#1f5582]/40'
     },
   ];
 
@@ -97,23 +100,23 @@ const Dashboard = () => {
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1
+        staggerChildren: 0.08
       }
     }
   };
 
   const item = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { opacity: 0, y: 15 },
     show: { opacity: 1, y: 0 }
   };
 
   return (
-    <div className="p-6 md:p-10 space-y-10 relative overflow-hidden bg-background min-h-screen text-text-main shadow-inner">
-      {/* Background Hero Asset */}
+    <div className="p-6 md:p-10 space-y-8 relative overflow-hidden bg-background min-h-screen text-text-main">
+      {/* Shell Biotech Hero Watermark Asset */}
       <div 
-        className="absolute top-0 right-0 w-[600px] h-[600px] -mr-40 -mt-20 opacity-30 pointer-events-none mix-blend-screen grayscale-[0.5]"
+        className="absolute top-0 right-0 w-[650px] h-[650px] -mr-32 -mt-24 opacity-15 pointer-events-none mix-blend-multiply dark:mix-blend-screen"
         style={{ 
-          backgroundImage: 'url("/dashboard_hero.png")',
+          backgroundImage: 'url("/shellbiotech_hero.png")',
           backgroundSize: 'contain',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat'
@@ -121,168 +124,193 @@ const Dashboard = () => {
       />
       
       {/* Mesh Background */}
-      <div className="absolute inset-0 bg-mesh opacity-50 z-0" />
+      <div className="absolute inset-0 bg-mesh opacity-60 z-0 pointer-events-none" />
 
+      {/* Header */}
       <motion.header 
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         className="flex flex-col md:flex-row md:items-center justify-between relative z-10 gap-6"
       >
-        <div className="flex items-center gap-6">
-           <div className="p-4 bg-primary rounded-3xl shadow-2xl shadow-primary/20">
-              <LayoutDashboard size={32} className="text-white" />
+        <div className="flex items-center gap-5">
+           <div className="w-14 h-14 bg-white border border-[#d9ddda] rounded-2xl flex items-center justify-center p-2 shadow-sm">
+             <img 
+               src="/shellbiotech_logo.png" 
+               alt="Shell Biotech Logo" 
+               className="max-h-full max-w-full object-contain"
+             />
            </div>
            <div>
-              <h1 className="text-4xl font-black tracking-tighter mb-1 text-text-main">
-                {isPatient ? 'Patient Portal' : 'Clinical Overview'}
+              <div className="flex items-center gap-2">
+                <span className="font-heading text-xs font-black uppercase tracking-widest text-secondary">Shell Biotech</span>
+                <span className="w-1 h-1 rounded-full bg-text-muted/30" />
+                <span className="text-[11px] font-semibold text-text-muted">Hyderabad Network</span>
+              </div>
+              <h1 className="font-heading text-3xl md:text-4xl font-black tracking-tight text-text-main">
+                {isPatient ? 'Patient Clinical Portal' : 'Clinical & Distribution Overview'}
               </h1>
-              <div className="flex items-center gap-3">
-                <span className="text-text-muted font-bold text-sm">Welcome back, <span className="text-primary">{user?.full_name || 'Staff'}</span></span>
-                <span className="w-1 h-1 rounded-full bg-text-muted/20" />
-                <span className="px-3 py-1 bg-surface border border-subtle rounded-full text-[10px] font-black uppercase tracking-widest text-text-muted shadow-sm">{user?.role}</span>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-text-muted font-medium text-xs">
+                  Signed in as <span className="text-secondary font-bold">{user?.full_name || 'Healthcare Practitioner'}</span>
+                </span>
+                <span className="w-1 h-1 rounded-full bg-text-muted/30" />
+                <span className="px-2.5 py-0.5 bg-secondary/10 border border-secondary/20 rounded-full text-[10px] font-bold uppercase tracking-wider text-secondary">
+                  {user?.role}
+                </span>
               </div>
            </div>
         </div>
-        <div className="hidden sm:flex items-center gap-4 bg-surface border border-subtle px-6 py-3 rounded-2xl shadow-sm">
-           <Clock size={16} className="text-primary" />
-           <span className="text-[10px] font-black uppercase tracking-widest text-text-muted">Real-time Telemetry Active</span>
-           <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+        <div className="hidden sm:flex items-center gap-3 bg-surface border border-border-main px-4 py-2.5 rounded-xl shadow-xs">
+           <Clock size={15} className="text-secondary" />
+           <span className="text-[11px] font-bold uppercase tracking-wider text-text-muted">
+             Telemetry: Connected
+           </span>
+           <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
         </div>
       </motion.header>
 
+      {/* Institutional Operational Notice */}
+      <div className="relative z-10 p-4 bg-secondary/10 border-l-4 border-secondary rounded-xl flex items-start gap-3 shadow-xs">
+        <Info size={18} className="text-secondary flex-shrink-0 mt-0.5" />
+        <div className="text-xs text-text-main font-medium leading-relaxed">
+          <strong className="text-text-main font-bold">Operational Note:</strong> Shell Biotech manages pharmaceutical sourcing, regulatory verification, marketing representation, and institutional hospital distribution across healthcare facilities.
+        </div>
+      </div>
+
+      {/* Stats Cards */}
       <motion.div 
         variants={container}
         initial="hidden"
         animate="show"
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 relative z-10"
       >
         {statCards.map((stat) => (
           <motion.div
             key={stat.name}
             variants={item}
             className={cn(
-              "group relative overflow-hidden bg-surface border border-subtle rounded-[2.5rem] p-8 transition-all duration-500 shadow-xl",
+              "group relative overflow-hidden bg-surface border border-border-main rounded-2xl p-6 transition-all duration-300 shadow-sm hover:shadow-md",
               stat.border
             )}
           >
-            <div className="flex items-center justify-between mb-8">
-              <div className={cn("p-5 rounded-2xl shadow-inner", stat.bg)}>
-                <stat.icon className={stat.color} size={32} />
+            <div className="flex items-center justify-between mb-4">
+              <div className={cn("p-3 rounded-xl shadow-inner", stat.bg)}>
+                <stat.icon className={stat.color} size={24} />
               </div>
-              <div className="flex items-center gap-1.5 text-green-500 text-[10px] font-black bg-green-500/10 px-3 py-1.5 rounded-full border border-green-500/20">
-                <TrendingUp size={14} />
-                +14.2%
+              <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
+                <TrendingUp size={13} />
+                Active
               </div>
             </div>
             <div>
-              <p className="text-text-muted text-[10px] font-black uppercase tracking-[0.2em] mb-2">{stat.name}</p>
-              <h3 className="text-4xl font-black tracking-tight tabular-nums">
-                {loading ? <span className="animate-pulse opacity-30 text-2xl">SYST::LOAD</span> : stat.value}
+              <p className="text-text-muted text-[11px] font-bold uppercase tracking-wider mb-1">{stat.name}</p>
+              <h3 className="font-heading text-3xl font-black tracking-tight tabular-nums text-text-main">
+                {loading ? <span className="animate-pulse opacity-40 text-xl">Loading...</span> : stat.value}
               </h3>
             </div>
-            <div className="absolute bottom-0 right-0 p-4 opacity-5 group-hover:opacity-20 transition-opacity">
-               <stat.icon size={80} />
+            <div className="absolute bottom-0 right-0 p-3 opacity-5 group-hover:opacity-15 transition-opacity">
+               <stat.icon size={64} />
             </div>
           </motion.div>
         ))}
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 relative z-10">
+      {/* Main Grids */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 relative z-10">
         <motion.div 
-          initial={{ opacity: 0, scale: 0.98 }}
+          initial={{ opacity: 0, scale: 0.99 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.4 }}
-          className="lg:col-span-2 space-y-10"
+          transition={{ delay: 0.2 }}
+          className="lg:col-span-2 space-y-8"
         >
           {!isPatient && (
-            <div className="bg-surface border border-subtle rounded-[3rem] p-10 shadow-2xl relative overflow-hidden">
-              <div className="flex items-center justify-between mb-12">
+            <div className="bg-surface border border-border-main rounded-2xl p-6 sm:p-8 shadow-sm relative overflow-hidden">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                 <div>
-                  <h2 className="text-2xl font-black flex items-center gap-4">
-                    <div className="p-3 bg-primary/10 rounded-2xl border border-primary/20">
-                      <Activity size={24} className="text-primary" />
+                  <h2 className="font-heading text-xl font-black text-text-main flex items-center gap-3">
+                    <div className="p-2 bg-secondary/10 rounded-xl border border-secondary/20">
+                      <Activity size={20} className="text-secondary" />
                     </div>
-                    Clinical Velocity
+                    Clinical Activity Velocity
                   </h2>
-                  <p className="text-text-muted text-sm mt-1 font-bold italic">Daily admission throughput & engagement</p>
+                  <p className="text-text-muted text-xs mt-1 font-medium">Daily healthcare throughput, diagnostic consultations, and patient visits</p>
                 </div>
-                <div className="hidden sm:flex items-center gap-8">
-                  <div className="flex items-center gap-3">
-                    <div className="w-3 h-3 rounded-full bg-primary shadow-lg shadow-primary/40" />
-                    <span className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em]">Visits</span>
+                <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2.5 h-2.5 rounded-full bg-[#0b1f33] dark:bg-[#5b8570]" />
+                    <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Visits</span>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-3 h-3 rounded-full bg-secondary shadow-lg shadow-secondary/40" />
-                    <span className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em]">Registry</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2.5 h-2.5 rounded-full bg-[#496b5a]" />
+                    <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Registry Intake</span>
                   </div>
                 </div>
               </div>
-              <div className="h-[380px] w-full">
+              <div className="h-[320px] w-full">
                 {loading ? (
                   <div className="w-full h-full flex items-center justify-center">
-                    <div className="w-16 h-16 border-4 border-primary/10 border-t-primary rounded-full animate-spin" />
+                    <div className="w-12 h-12 border-3 border-secondary/20 border-t-secondary rounded-full animate-spin" />
                   </div>
                 ) : (
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={trendsData}>
                       <defs>
                         <linearGradient id="colorVisits" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.6}/>
-                          <stop offset="95%" stopColor="var(--color-primary)" stopOpacity={0}/>
+                          <stop offset="5%" stopColor="#0b1f33" stopOpacity={0.6}/>
+                          <stop offset="95%" stopColor="#0b1f33" stopOpacity={0}/>
                         </linearGradient>
                         <linearGradient id="colorPatients" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="var(--color-secondary)" stopOpacity={0.6}/>
-                          <stop offset="95%" stopColor="var(--color-secondary)" stopOpacity={0}/>
+                          <stop offset="5%" stopColor="#496b5a" stopOpacity={0.6}/>
+                          <stop offset="95%" stopColor="#496b5a" stopOpacity={0}/>
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="currentColor" opacity={0.03} vertical={false} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="currentColor" opacity={0.06} vertical={false} />
                       <XAxis 
                         dataKey="name" 
                         stroke="currentColor" 
-                        opacity={0.3}
-                        fontSize={10} 
-                        fontWeight={900}
+                        opacity={0.4}
+                        fontSize={11} 
+                        fontWeight={600}
                         tickLine={false} 
                         axisLine={false} 
-                        dy={20}
+                        dy={12}
                       />
                       <YAxis 
                         stroke="currentColor" 
-                        opacity={0.3}
-                        fontSize={10} 
-                        fontWeight={900}
+                        opacity={0.4}
+                        fontSize={11} 
+                        fontWeight={600}
                         tickLine={false} 
                         axisLine={false} 
-                        dx={-20}
+                        dx={-12}
                       />
                       <Tooltip 
                         contentStyle={{ 
                           backgroundColor: 'var(--surface)', 
-                          border: '1px solid var(--glass-border)', 
-                          borderRadius: '24px',
-                          backdropFilter: 'blur(20px)',
-                          padding: '20px 24px',
-                          boxShadow: '0 20px 50px rgba(0,0,0,0.1)'
+                          border: '1px solid var(--border-main)', 
+                          borderRadius: '12px',
+                          padding: '12px 16px',
+                          boxShadow: '0 10px 25px rgba(0,0,0,0.08)'
                         }}
-                        itemStyle={{ fontSize: '12px', fontWeight: 900, textTransform: 'uppercase' }}
+                        itemStyle={{ fontSize: '11px', fontWeight: 700 }}
                       />
                       <Area 
                         type="monotone" 
                         dataKey="visits" 
-                        stroke="var(--color-primary)" 
+                        stroke="#0b1f33" 
                         fillOpacity={1} 
                         fill="url(#colorVisits)" 
-                        strokeWidth={4} 
-                        animationDuration={2500}
+                        strokeWidth={3} 
+                        animationDuration={1500}
                       />
                       <Area 
                         type="monotone" 
                         dataKey="patients" 
-                        stroke="var(--color-secondary)" 
+                        stroke="#496b5a" 
                         fillOpacity={1} 
                         fill="url(#colorPatients)" 
-                        strokeWidth={4} 
-                        animationDuration={2500}
+                        strokeWidth={3} 
+                        animationDuration={1500}
                       />
                     </AreaChart>
                   </ResponsiveContainer>
@@ -291,152 +319,146 @@ const Dashboard = () => {
             </div>
           )}
 
-          <div className="bg-surface border border-subtle rounded-[3rem] overflow-hidden shadow-2xl relative">
-            <div className="p-10 border-b border-subtle flex items-center justify-between">
+          {/* Recent Patients Table / Cards */}
+          <div className="bg-surface border border-border-main rounded-2xl overflow-hidden shadow-sm relative">
+            <div className="p-6 border-b border-border-main flex items-center justify-between">
               <div>
-                <h2 className="text-2xl font-black text-text-main">{isPatient ? 'Your Medical Summary' : 'Recent Case Updates'}</h2>
-                <p className="text-text-muted text-sm mt-1 font-bold">
-                  {isPatient ? 'Real-time synchronization with your clinical record' : 'Latest diagnostic and telemetry events'}
+                <h2 className="font-heading text-xl font-black text-text-main">{isPatient ? 'My Health Records' : 'Recent Case Updates'}</h2>
+                <p className="text-text-muted text-xs mt-0.5 font-medium">
+                  {isPatient ? 'Verified records in Shell Biotech clinical system' : 'Recent diagnostic registrations and telemetry events'}
                 </p>
               </div>
               <motion.button 
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.02 }}
                 onClick={() => navigate('/patients')}
-                className="group p-2 bg-primary/10 hover:bg-primary rounded-2xl transition-all border border-primary/20 shadow-lg"
+                className="group px-3 py-1.5 bg-secondary/10 hover:bg-secondary text-secondary hover:text-white rounded-xl transition-all border border-secondary/20 font-bold text-xs flex items-center gap-1.5 cursor-pointer"
               >
-                <div className="flex items-center gap-3 px-4 py-2">
-                  <span className="text-xs font-black uppercase tracking-widest group-hover:text-white">View All</span>
-                  <ChevronRight size={18} className="group-hover:text-white group-hover:translate-x-1 transition-all" />
-                </div>
+                <span>View Full Registry</span>
+                <ChevronRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
               </motion.button>
             </div>
-            <div className="divide-y divide-subtle">
+            <div className="divide-y divide-border-main">
               {recentPatients.length > 0 ? recentPatients.map((patient, idx) => (
                 <motion.div 
                   key={patient.id} 
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.6 + (idx * 0.1) }}
+                  transition={{ delay: 0.1 + (idx * 0.05) }}
                   onClick={() => navigate(`/patients/${patient.id}`)}
-                  className="p-8 flex items-center justify-between hover:bg-primary/5 transition-all group cursor-pointer"
+                  className="p-5 flex items-center justify-between hover:bg-secondary/5 transition-all group cursor-pointer"
                 >
-                  <div className="flex items-center gap-6">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-black border border-white/10 text-2xl shadow-xl transition-transform group-hover:rotate-12 group-hover:scale-110">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0b1f33] to-[#496b5a] flex items-center justify-center text-white font-black text-base shadow-xs group-hover:scale-105 transition-transform">
                       {(patient.full_name || '?').charAt(0)}
                     </div>
                     <div>
-                      <h4 className="text-xl font-black tracking-tight text-text-main">{patient.full_name}</h4>
-                      <p className="text-[10px] font-black text-text-muted uppercase tracking-[0.25em] mt-1.5 flex items-center gap-2">
-                        <span className="text-primary/70">{patient.external_id || 'ID::UNSET'}</span>
+                      <h4 className="font-heading text-base font-bold text-text-main group-hover:text-secondary transition-colors">{patient.full_name}</h4>
+                      <p className="text-[11px] text-text-muted flex items-center gap-2 mt-0.5 font-medium">
+                        <span className="font-mono text-secondary font-bold">{patient.external_id || 'ID::UNSET'}</span>
                         <span className="w-1 h-1 rounded-full bg-text-muted/30" />
-                        <span className="text-text-muted">{patient.condition || 'GENERAL_CARE'}</span>
+                        <span>{patient.condition || 'General Care'}</span>
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-[10px] font-black text-text-muted uppercase tracking-widest mb-3">Health Status</p>
-                    <span className="px-5 py-2 bg-green-500/10 text-green-500 text-[10px] font-black rounded-full border border-green-500/20 uppercase tracking-[0.15em] shadow-sm">
-                      Stable
+                    <span className="px-3 py-1 bg-secondary/10 text-secondary text-[10px] font-bold rounded-full border border-secondary/20 uppercase tracking-wider">
+                      Verified Active
                     </span>
                   </div>
                 </motion.div>
               )) : (
-                <div className="p-20 text-center text-text-muted font-black uppercase tracking-[0.3em] text-sm italic opacity-50">
-                  Waiting for telemetry...
+                <div className="p-12 text-center text-text-muted font-bold uppercase tracking-wider text-xs">
+                  No recent patient cases recorded.
                 </div>
               )}
             </div>
           </div>
         </motion.div>
 
+        {/* Right Column: Pulse Actions & AI Box */}
         <motion.div 
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.5 }}
-          className="space-y-10 relative z-10"
+          transition={{ delay: 0.3 }}
+          className="space-y-6 relative z-10"
         >
-          <div className="bg-surface border border-subtle rounded-[3rem] p-10 shadow-2xl">
-            <h2 className="text-2xl font-black mb-10 flex items-center gap-3">
-               <Zap size={24} className="text-primary" />
-               Pulse Actions
+          {/* Quick Actions */}
+          <div className="bg-surface border border-border-main rounded-2xl p-6 shadow-sm">
+            <h2 className="font-heading text-lg font-black mb-5 flex items-center gap-2.5 text-text-main">
+               <Zap size={18} className="text-secondary" />
+               Clinical Actions
             </h2>
-            <div className="space-y-5">
+            <div className="space-y-3">
               {!isPatient && (
                 <button 
                   onClick={() => navigate('/patients', { state: { openAddModal: true } })}
-                  className="w-full flex items-center justify-between p-6 bg-primary hover:bg-primary/90 text-white rounded-[2rem] transition-all font-black shadow-2xl shadow-primary/30 group"
+                  className="w-full flex items-center justify-between p-4 bg-[#0b1f33] hover:bg-[#16324f] dark:bg-secondary dark:hover:bg-secondary-light text-white rounded-xl transition-all font-bold text-xs uppercase tracking-wider shadow-sm group cursor-pointer"
                 >
-                  <span className="uppercase tracking-widest">New Clinical Chart</span>
-                  <ArrowUpRight size={26} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                  <span>New Patient Chart</span>
+                  <ArrowUpRight size={18} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                 </button>
               )}
               <button 
                 onClick={() => navigate('/patients')}
-                className="w-full flex items-center justify-between p-6 bg-surface hover:bg-primary/10 border border-subtle rounded-[2rem] transition-all font-black group"
+                className="w-full flex items-center justify-between p-4 bg-surface hover:bg-secondary/10 border border-border-main rounded-xl transition-all font-bold text-xs uppercase tracking-wider text-text-main group cursor-pointer"
               >
-                <span className="text-text-main group-hover:text-primary uppercase tracking-widest">{isPatient ? 'Lab Results' : 'Ingest Documents'}</span>
-                <FileText size={26} className="text-text-muted group-hover:text-primary transition-colors" />
+                <span>{isPatient ? 'Lab Formulations' : 'Ingest Clinical Documents'}</span>
+                <FileText size={18} className="text-secondary" />
               </button>
               {isAdmin && (
                 <button 
                   onClick={() => navigate('/audit')}
-                  className="w-full flex items-center justify-between p-6 bg-surface hover:bg-primary/10 border border-subtle rounded-[2rem] transition-all font-black group"
+                  className="w-full flex items-center justify-between p-4 bg-surface hover:bg-secondary/10 border border-border-main rounded-xl transition-all font-bold text-xs uppercase tracking-wider text-text-main group cursor-pointer"
                 >
-                  <span className="text-text-main group-hover:text-primary uppercase tracking-widest">Global Audit</span>
-                  <ShieldCheck size={26} className="text-text-muted group-hover:text-emerald-500 transition-colors" />
+                  <span>Security Audit Log</span>
+                  <ShieldCheck size={18} className="text-emerald-600 dark:text-emerald-400" />
                 </button>
               )}
             </div>
           </div>
 
+          {/* AI Reasoning Box */}
           <motion.div 
-            whileHover={{ scale: 1.02 }}
+            whileHover={{ scale: 1.01 }}
             onClick={() => navigate('/assistant')}
-            className="bg-gradient-to-br from-primary via-secondary to-accent rounded-[3.5rem] p-10 text-white relative overflow-hidden shadow-2xl group cursor-pointer"
+            className="bg-gradient-to-br from-[#0b1f33] via-[#16324f] to-[#496b5a] rounded-2xl p-6 text-white relative overflow-hidden shadow-lg group cursor-pointer"
           >
-            <div className="absolute top-0 right-0 w-full h-full opacity-20 group-hover:opacity-40 transition-opacity">
+            <div className="absolute top-0 right-0 w-full h-full opacity-20 group-hover:opacity-30 transition-opacity">
               <HealthScene type="heart" />
             </div>
             <div className="relative z-10">
-              <div className="flex items-center gap-4 mb-8">
-                <div className="p-3 bg-white/20 backdrop-blur-md rounded-2xl shadow-xl">
-                  <Zap size={28} className="text-white fill-white animate-pulse" />
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-white/15 backdrop-blur-md rounded-xl">
+                  <Zap size={20} className="text-white fill-white animate-pulse" />
                 </div>
-                <h3 className="text-3xl font-black italic tracking-tighter">Med-Gemini</h3>
+                <h3 className="font-heading text-xl font-black tracking-tight">Shell Biotech AI</h3>
               </div>
-              <p className="text-base text-white mb-10 font-bold leading-relaxed">
-                Context-aware clinical reasoning via modern RAG. 
-                Full RBAC protected telemetry analysis.
+              <p className="text-xs text-white/90 mb-6 font-medium leading-relaxed">
+                Context-aware multimodal clinical reasoning and pharmaceutical documentation synthesis.
               </p>
-              <button className="bg-white text-primary px-10 py-4 rounded-2xl text-xs font-black shadow-2xl transition-all hover:scale-105 uppercase tracking-widest">
-                Start Session
+              <button className="bg-white text-[#0b1f33] px-5 py-2.5 rounded-xl text-xs font-bold shadow-md transition-all hover:bg-emerald-50 uppercase tracking-wider">
+                Open Assistant
               </button>
             </div>
           </motion.div>
 
-          <div className="bg-surface border border-subtle rounded-[3rem] p-10 shadow-2xl">
-            <h3 className="text-[10px] font-black text-text-muted uppercase tracking-[0.4em] mb-10">Infrastructure Status</h3>
-            <div className="space-y-8">
+          {/* Regional Hub Info */}
+          <div className="bg-surface border border-border-main rounded-2xl p-6 shadow-sm">
+            <h3 className="text-[10px] font-bold text-text-muted uppercase tracking-[0.2em] mb-4">
+              Regional Operations Hub
+            </h3>
+            <div className="space-y-3.5 text-xs">
               <div className="flex items-center justify-between">
-                <div className="flex gap-4 items-center">
-                   <div className="w-3 h-3 rounded-full bg-green-500 shadow-lg shadow-green-500/50" />
-                   <span className="text-xs font-black tracking-widest text-text-main uppercase">API Node</span>
-                </div>
-                <span className="text-[10px] text-green-500 font-black uppercase tracking-widest">Operational</span>
+                <span className="text-text-muted font-medium">Distribution Network</span>
+                <span className="font-bold text-secondary">Telangana State</span>
               </div>
               <div className="flex items-center justify-between">
-                <div className="flex gap-4 items-center">
-                   <div className="w-3 h-3 rounded-full bg-green-500 shadow-lg shadow-green-500/50" />
-                   <span className="text-xs font-black tracking-widest text-text-main uppercase">Logic Engine</span>
-                </div>
-                <span className="text-[10px] text-green-500 font-black uppercase tracking-widest">Synched</span>
+                <span className="text-text-muted font-medium">Registered Office</span>
+                <span className="font-bold text-text-main">Hyderabad – 501505</span>
               </div>
               <div className="flex items-center justify-between">
-                <div className="flex gap-4 items-center">
-                   <div className="w-3 h-3 rounded-full bg-green-500 shadow-lg shadow-green-500/50" />
-                   <span className="text-xs font-black tracking-widest text-text-main uppercase">Neural Core</span>
-                </div>
-                <span className="text-[10px] text-green-500 font-black uppercase tracking-widest">Online</span>
+                <span className="text-text-muted font-medium">Clinical RAG Engine</span>
+                <span className="font-bold text-emerald-600 dark:text-emerald-400">Online & Synchronized</span>
               </div>
             </div>
           </div>
@@ -444,7 +466,7 @@ const Dashboard = () => {
       </div>
       
       {/* 3D Flow Decoration */}
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-32 opacity-10 pointer-events-none z-0">
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-24 opacity-10 pointer-events-none z-0">
           <HealthScene type="dna" />
       </div>
     </div>

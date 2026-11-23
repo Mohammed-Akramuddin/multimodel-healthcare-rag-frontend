@@ -1,48 +1,92 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Outfit", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-heading: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
   
-  /* Color Palette Tokens */
+  /* Color Palette Tokens - Shell Biotech Design System */
   --color-primary: var(--primary);
+  --color-primary-light: var(--primary-light);
+  --color-primary-dark: var(--primary-dark);
   --color-secondary: var(--secondary);
+  --color-secondary-light: var(--secondary-light);
+  --color-secondary-tint: var(--secondary-tint);
   --color-accent: var(--accent);
   --color-surface: var(--surface);
   --color-background: var(--background);
+  --color-bg-alt: var(--bg-alt);
   --color-text-main: var(--text-main);
   --color-text-muted: var(--text-muted);
+  --color-text-subtle: var(--text-subtle);
   --color-subtle: var(--border-subtle);
+  --color-border-main: var(--border-main);
 }
 
 :root {
-  /* Default: Light Mode (Vibrant & Clean) */
-  --background: #f8fafc;
-  --surface: #ffffff;
-  --primary: #3b82f6;
-  --secondary: #6366f1;
-  --accent: #8b5cf6;
-  --text-main: #000000;
-  --text-muted: #4b5563;
-  --border-subtle: rgba(0, 0, 0, 0.05);
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.4);
+  /* Shell Biotech Theme: Light / Clinical Clean */
+  --primary: #0b1f33;          /* Shell Corporate Navy */
+  --primary-light: #16324f;    /* Lighter Navy */
+  --primary-dark: #06111c;     /* Deep Midnight Navy */
+  --secondary: #496b5a;        /* Biotech Sage Green */
+  --secondary-light: #5b8570;  /* Lighter Biotech Green */
+  --secondary-tint: #eef4f0;   /* Soft Sage Mint Tint */
+  --accent: #8e9b90;           /* Sage Accent */
+  
+  --background: #fafaf7;       /* Warm Clinical Off-White */
+  --bg-alt: #f2f3f1;           /* Light Slate Tint */
+  --surface: #ffffff;          /* Pure White Cards & Panels */
+  
+  --text-main: #202426;        /* Deep Slate Charcoal */
+  --text-muted: #596166;       /* Muted Slate Grey */
+  --text-subtle: #7e878c;      /* Subtle Silver Grey */
+  
+  --border-subtle: #e8ebe9;    /* Clean Subtle Border */
+  --border-main: #d9ddda;      /* Distinct Border */
+  
+  --glass-bg: rgba(255, 255, 255, 0.88);
+  --glass-border: rgba(217, 221, 218, 0.8);
+  
+  --success: #2e6b47;
+  --success-bg: #eaf4ee;
+  --warning: #946800;
+  --warning-bg: #fcf6e8;
+  --error: #962828;
+  --error-bg: #fbefef;
   
   color-scheme: light;
 }
 
 [data-theme='dark'] {
-  /* Dark Mode (Deep & Premium) */
-  --background: #0a0a0a;
-  --surface: #151619;
-  --primary: #3b82f6;
-  --secondary: #8b5cf6;
-  --accent: #d946ef;
+  /* Shell Biotech Theme: Dark / Deep Corporate Navy */
+  --background: #06111c;       /* Deepest Midnight Navy */
+  --bg-alt: #0b1f33;           /* Corporate Navy */
+  --surface: #0e2238;          /* Midnight Slate Card */
+  
+  --primary: #496b5a;          /* Sage Green Accent for primary highlights */
+  --primary-light: #5b8570;
+  --primary-dark: #040b12;
+  --secondary: #5b8570;
+  --secondary-light: #7da590;
+  --secondary-tint: #142e47;
+  --accent: #8e9b90;
+  
   --text-main: #ffffff;
-  --text-muted: #94a3b8;
-  --border-subtle: rgba(255, 255, 255, 0.05);
-  --glass-bg: rgba(21, 22, 25, 0.7);
+  --text-muted: #b8c4cc;       /* Shell Biotech Muted Text */
+  --text-subtle: #7e878c;
+  
+  --border-subtle: #142b42;    /* Shell Biotech Slate Navy Border */
+  --border-main: #1d3e5e;
+  
+  --glass-bg: rgba(14, 34, 56, 0.85);
   --glass-border: rgba(255, 255, 255, 0.08);
+  
+  --success: #3db874;
+  --success-bg: rgba(46, 107, 71, 0.2);
+  --warning: #eab308;
+  --warning-bg: rgba(148, 104, 0, 0.2);
+  --error: #f87171;
+  --error-bg: rgba(150, 40, 40, 0.2);
   
   color-scheme: dark;
 }
@@ -51,29 +95,80 @@ body {
   background-color: var(--background);
   color: var(--text-main);
   -webkit-font-smoothing: antialiased;
-  transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
-              color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+              color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   font-family: var(--font-sans);
 }
 
-/* Glassmorphism Utility */
-.glass-panel {
-  background: var(--glass-bg);
-  backdrop-filter: blur(16px) saturate(180%);
-  border: 1px solid var(--glass-border);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  letter-spacing: -0.02em;
 }
 
-/* Animated Gradient Background */
+/* Glassmorphism Panel with Shell Biotech Aesthetics */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 10px 30px 0 rgba(11, 31, 51, 0.06);
+}
+
+/* Shell Biotech Mesh Gradient Background */
 .bg-mesh {
   background-image: 
-    radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.15) 0px, transparent 50%);
+    radial-gradient(at 0% 0%, rgba(11, 31, 51, 0.08) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(73, 107, 90, 0.12) 0px, transparent 50%);
+}
+
+[data-theme='dark'] .bg-mesh {
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(73, 107, 90, 0.12) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(11, 31, 51, 0.4) 0px, transparent 50%);
+}
+
+/* Shell Biotech Badges */
+.badge-shell-primary {
+  color: #0b1f33;
+  background-color: #eaf0f6;
+  border: 1px solid #d2dfeb;
+}
+
+.badge-shell-secondary {
+  color: #496b5a;
+  background-color: #eef4f0;
+  border: 1px solid #d4e3db;
+}
+
+/* Shell Biotech Buttons */
+.btn-shell-primary {
+  background-color: #0b1f33;
+  color: #ffffff;
+  border: 1px solid #0b1f33;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-shell-primary:hover {
+  background-color: #16324f;
+  border-color: #16324f;
+  color: #ffffff;
+}
+
+.btn-shell-secondary {
+  background-color: #496b5a;
+  color: #ffffff;
+  border: 1px solid #496b5a;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-shell-secondary:hover {
+  background-color: #5b8570;
+  border-color: #5b8570;
+  color: #ffffff;
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -82,7 +177,7 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background: var(--border-subtle);
-  border-radius: 10px;
+  border-radius: 6px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -91,7 +186,7 @@ body {
 
 @keyframes float {
   0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+  50% { transform: translateY(-8px); }
   100% { transform: translateY(0px); }
 }
 

@@ -6,11 +6,13 @@ import {
   FileText, 
   CheckCircle2, 
   XCircle, 
-  Clock,
-  Database,
-  UserCheck,
-  Activity,
-  ShieldCheck
+  Clock, 
+  Database, 
+  UserCheck, 
+  Activity, 
+  ShieldCheck,
+  Building2,
+  MapPin
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '../lib/utils';
@@ -40,7 +42,7 @@ const Admin = () => {
       setStats(statsRes.data);
       setRequests(requestsRes.data);
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Failed to fetch admin data');
+      setError(err.response?.data?.detail || 'Failed to fetch administrative data');
     } finally {
       setIsLoading(false);
     }
@@ -56,7 +58,7 @@ const Admin = () => {
       await api.post(`/api/admin/signup-requests/${id}/${action}`, {});
       await fetchAdminData();
     } catch (err: any) {
-      alert(err.response?.data?.detail || `Failed to ${action} request`);
+      alert(err.response?.data?.detail || `Failed to ${action} practitioner request`);
     } finally {
       setActionLoading(null);
     }
@@ -64,10 +66,10 @@ const Admin = () => {
 
   if (isLoading) {
     return (
-      <div className="p-4 md:p-8 space-y-8 animate-pulse text-gray-500">
-        <div className="h-10 w-48 bg-white/5 rounded-xl ml-2 mb-4" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[...Array(4)].map((_, i) => <div key={i} className="h-32 bg-white/5 rounded-3xl" />)}
+      <div className="p-6 md:p-10 space-y-6 animate-pulse text-text-muted">
+        <div className="h-8 w-56 bg-surface rounded-xl mb-4" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {[...Array(4)].map((_, i) => <div key={i} className="h-28 bg-surface rounded-2xl" />)}
         </div>
       </div>
     );
@@ -75,11 +77,11 @@ const Admin = () => {
 
   if (error) {
     return (
-      <div className="p-8 text-red-400 flex flex-col items-center justify-center min-h-[50vh]">
-        <ShieldAlert size={48} className="mb-4" />
-        <h2 className="text-xl font-bold">Access Denied or Connection Error</h2>
-        <p className="text-gray-500 mt-2">{error}</p>
-        <button onClick={fetchAdminData} className="mt-4 px-6 py-2 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-all">
+      <div className="p-8 text-red-500 flex flex-col items-center justify-center min-h-[50vh]">
+        <ShieldAlert size={44} className="mb-3" />
+        <h2 className="font-heading text-lg font-bold">Administrative Permission Required</h2>
+        <p className="text-xs text-text-muted mt-1">{error}</p>
+        <button onClick={fetchAdminData} className="mt-4 px-5 py-2 bg-surface rounded-xl border border-border-main hover:bg-secondary/10 text-xs font-bold transition-all">
           Retry Fetch
         </button>
       </div>
@@ -87,174 +89,153 @@ const Admin = () => {
   }
 
   return (
-    <div className="p-4 md:p-8 space-y-8 pb-20 bg-background text-text-main min-h-screen">
+    <div className="p-6 md:p-10 space-y-8 pb-20 bg-background text-text-main min-h-screen">
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-black text-text-main tracking-tight flex items-center gap-3">
-            <ShieldAlert className="text-primary" size={32} />
-            System Administration 🛡️
-          </h1>
-          <p className="text-text-muted mt-1 text-sm md:text-base font-bold">Manage system statistics and role-based access approvals.</p>
-        </div>
-        <div className="flex items-center gap-3 self-end md:self-auto">
-          <div className="bg-surface border border-subtle px-4 py-2 rounded-xl flex items-center gap-2 text-[10px] md:text-xs font-bold text-text-muted shadow-xl backdrop-blur-md">
-            <Clock size={14} className="text-primary" />
-            Last Sync: {new Date().toLocaleTimeString()}
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-bold text-secondary uppercase tracking-widest">Administration</span>
+            <span className="w-1 h-1 rounded-full bg-text-muted/30" />
+            <span className="text-[11px] font-medium text-text-muted">Shell Biotech Hub</span>
           </div>
+          <h1 className="font-heading text-2xl md:text-3xl font-black text-text-main tracking-tight mt-0.5">
+            System Administration & Access Control
+          </h1>
+          <p className="text-text-muted mt-1 text-xs font-medium">Manage clinical practitioner credentials, user provisioning, and distribution telemetry.</p>
+        </div>
+        <div className="flex items-center gap-2.5 self-end md:self-auto bg-surface border border-border-main px-3.5 py-2 rounded-xl text-xs font-semibold text-text-muted shadow-xs">
+          <Clock size={14} className="text-secondary" />
+          <span>Last Sync: {new Date().toLocaleTimeString()}</span>
         </div>
       </header>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {[
-          { name: 'Total Users', value: stats?.total_users ?? 0, icon: Users, color: 'text-blue-500', bg: 'bg-blue-500/10' },
-          { name: 'Managed Patients', value: stats?.total_patients ?? 0, icon: UserCheck, color: 'text-purple-500', bg: 'bg-purple-500/10' },
-          { name: 'Clinical Assets', value: stats?.total_documents ?? 0, icon: FileText, color: 'text-green-500', bg: 'bg-green-500/10' },
-          { name: 'Active Sessions', value: stats?.active_sessions ?? 0, icon: Activity, color: 'text-orange-500', bg: 'bg-orange-500/10' },
+          { name: 'Authorized Practitioners', value: stats?.total_users ?? 0, icon: Users, color: 'text-[#0b1f33] dark:text-[#5b8570]', bg: 'bg-[#0b1f33]/10 dark:bg-[#5b8570]/20' },
+          { name: 'Registered Patient Charts', value: stats?.total_patients ?? 0, icon: UserCheck, color: 'text-[#496b5a]', bg: 'bg-[#496b5a]/10' },
+          { name: 'Formulations & Docs', value: stats?.total_documents ?? 0, icon: FileText, color: 'text-[#2e6b47]', bg: 'bg-[#2e6b47]/10' },
+          { name: 'Active Sessions (24h)', value: stats?.active_sessions ?? 0, icon: Activity, color: 'text-[#1f5582]', bg: 'bg-[#1f5582]/10' },
         ].map((stat, i) => (
           <motion.div
             key={stat.name}
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: i * 0.1 }}
-            className="bg-surface backdrop-blur-xl border border-subtle rounded-3xl p-6 hover:border-primary/50 transition-all group shadow-2xl relative overflow-hidden"
+            transition={{ delay: i * 0.05 }}
+            className="bg-surface border border-border-main rounded-2xl p-6 transition-all shadow-xs relative overflow-hidden"
           >
             <div className="relative z-10">
-              <div className={cn("p-3 rounded-2xl w-fit mb-4 shadow-inner", stat.bg)}>
-                <stat.icon className={stat.color} size={24} />
+              <div className={cn("p-2.5 rounded-xl w-fit mb-3 shadow-inner", stat.bg)}>
+                <stat.icon className={stat.color} size={20} />
               </div>
-              <p className="text-text-muted text-[10px] font-black uppercase tracking-[0.2em]">{stat.name}</p>
-              <h3 className="text-3xl font-black text-text-main mt-2 tabular-nums">
+              <p className="text-text-muted text-[10px] font-bold uppercase tracking-wider">{stat.name}</p>
+              <h3 className="font-heading text-2xl font-black text-text-main mt-1 tabular-nums">
                 {stat.value}
               </h3>
             </div>
-            <div className="absolute -right-4 -bottom-4 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
-              <stat.icon size={100} />
+            <div className="absolute -right-3 -bottom-3 opacity-5">
+              <stat.icon size={80} />
             </div>
           </motion.div>
         ))}
       </div>
 
       {/* Requests Table */}
-      <div className="bg-surface/80 backdrop-blur-xl border border-subtle rounded-[2.5rem] overflow-hidden shadow-2xl">
-        <div className="p-6 md:p-8 border-b border-subtle flex flex-col sm:flex-row sm:items-center justify-between bg-primary/5 gap-4">
+      <div className="bg-surface border border-border-main rounded-2xl overflow-hidden shadow-sm">
+        <div className="p-5 sm:p-6 border-b border-border-main flex flex-col sm:flex-row sm:items-center justify-between bg-secondary/5 gap-3">
           <div>
-            <h2 className="text-xl font-black text-text-main flex items-center gap-3">
-              <Database size={20} className="text-primary" />
-              Access Requests 📄
+            <h2 className="font-heading text-lg font-black text-text-main flex items-center gap-2">
+              <Database size={18} className="text-secondary" />
+              Practitioner Authorization Requests
             </h2>
-            <p className="text-xs text-text-muted mt-1 font-bold">Review new healthcare practitioners and patient applications.</p>
+            <p className="text-xs text-text-muted mt-0.5 font-medium">Review and verify new hospital practitioners and clinic caregivers.</p>
           </div>
-          <span className="w-fit px-4 py-2 bg-primary/10 rounded-xl text-[10px] font-black text-primary uppercase tracking-widest border border-primary/20">
+          <span className="w-fit px-3 py-1 bg-secondary/10 rounded-lg text-[10px] font-bold text-secondary uppercase tracking-wider border border-secondary/20">
             {requests.length} Requests Total
           </span>
         </div>
 
-        <div className="overflow-x-auto custom-scrollbar">
-          <table className="w-full text-left border-collapse min-w-[700px]">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse min-w-[700px] text-sm">
             <thead>
-              <tr className="bg-primary/5 border-b border-subtle">
-                <th className="px-8 py-5 text-[10px] font-black text-text-muted uppercase tracking-[0.2em]">User Profile</th>
-                <th className="px-8 py-5 text-[10px] font-black text-text-muted uppercase tracking-[0.2em]">Role</th>
-                <th className="px-8 py-5 text-[10px] font-black text-text-muted uppercase tracking-[0.2em]">Requested On</th>
-                <th className="px-8 py-5 text-[10px] font-black text-text-muted uppercase tracking-[0.2em]">Status</th>
-                <th className="px-8 py-5 text-[10px] font-black text-text-muted uppercase tracking-[0.2em] text-right">Actions</th>
+              <tr className="bg-secondary/5 border-b border-border-main">
+                <th className="px-6 py-3.5 text-[10px] font-bold text-text-muted uppercase tracking-[0.16em]">Practitioner Profile</th>
+                <th className="px-6 py-3.5 text-[10px] font-bold text-text-muted uppercase tracking-[0.16em]">Role</th>
+                <th className="px-6 py-3.5 text-[10px] font-bold text-text-muted uppercase tracking-[0.16em]">Requested On</th>
+                <th className="px-6 py-3.5 text-[10px] font-bold text-text-muted uppercase tracking-[0.16em]">Status</th>
+                <th className="px-6 py-3.5 text-[10px] font-bold text-text-muted uppercase tracking-[0.16em] text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-border-main">
               {requests.length > 0 ? (
-                requests.map((request, i) => (
-                  <tr key={request.id} className="hover:bg-white/5 transition-all group">
-                    <td className="px-8 py-5">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-primary font-black border border-subtle text-lg shadow-lg">
+                requests.map((request) => (
+                  <tr key={request.id} className="hover:bg-secondary/5 transition-all group">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0b1f33] to-[#496b5a] flex items-center justify-center text-white font-bold text-sm shadow-xs">
                           {request.full_name.charAt(0)}
                         </div>
                         <div>
-                          <p className="text-base font-black text-text-main group-hover:text-primary transition-colors">{request.full_name}</p>
-                          <p className="text-xs text-text-muted font-bold tracking-tight">{request.email}</p>
+                          <p className="font-bold text-text-main group-hover:text-secondary transition-colors">{request.full_name}</p>
+                          <p className="text-xs text-text-muted font-medium">{request.email}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-8 py-5">
-                      <span className="px-3 py-1.5 bg-white/5 text-text-muted text-[10px] font-black rounded-lg border border-white/10 uppercase tracking-widest">
+                    <td className="px-6 py-4">
+                      <span className="px-2.5 py-1 bg-secondary/10 text-secondary text-[10px] font-bold rounded-md border border-secondary/20 uppercase tracking-wider">
                         {request.role}
                       </span>
                     </td>
-                    <td className="px-8 py-5 text-xs text-text-muted font-black uppercase tracking-widest">
+                    <td className="px-6 py-4 text-xs text-text-muted font-medium">
                       {new Date(request.created_at).toLocaleDateString()}
                     </td>
-                    <td className="px-8 py-5">
-                      <div className="flex items-center gap-2">
-                        {request.status === 'pending' ? (
-                          <span className="flex items-center gap-1.5 text-orange-400 text-[10px] font-black uppercase tracking-widest bg-orange-400/10 px-2 py-1 rounded-md border border-orange-400/20">
-                            <Clock size={12} /> Pending
-                          </span>
-                        ) : request.status === 'approved' ? (
-                          <span className="flex items-center gap-1.5 text-green-400 text-[10px] font-black uppercase tracking-widest bg-green-400/10 px-2 py-1 rounded-md border border-green-400/20">
-                            <CheckCircle2 size={12} /> Approved
-                          </span>
-                        ) : (
-                          <span className="flex items-center gap-1.5 text-red-400 text-[10px] font-black uppercase tracking-widest bg-red-400/10 px-2 py-1 rounded-md border border-red-400/20">
-                            <XCircle size={12} /> Rejected
-                          </span>
-                        )}
-                      </div>
+                    <td className="px-6 py-4">
+                      {request.status === 'pending' ? (
+                        <span className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 text-[10px] font-bold uppercase tracking-wider bg-amber-500/10 px-2.5 py-1 rounded-md border border-amber-500/20 w-fit">
+                          <Clock size={12} /> Pending Review
+                        </span>
+                      ) : request.status === 'approved' ? (
+                        <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20 w-fit">
+                          <CheckCircle2 size={12} /> Authorized
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-1.5 text-red-600 dark:text-red-400 text-[10px] font-bold uppercase tracking-wider bg-red-500/10 px-2.5 py-1 rounded-md border border-red-500/20 w-fit">
+                          <XCircle size={12} /> Rejected
+                        </span>
+                      )}
                     </td>
-                    <td className="px-8 py-5 text-right">
-                      {request.status === 'pending' && (
-                        <div className="flex items-center justify-end gap-3">
-                          <button 
-                            disabled={actionLoading === request.id}
+                    <td className="px-6 py-4 text-right">
+                      {request.status === 'pending' ? (
+                        <div className="flex items-center justify-end gap-2">
+                          <button
                             onClick={() => handleAction(request.id, 'approve')}
-                            className="p-3 text-green-500 hover:bg-green-500/10 rounded-2xl transition-all disabled:opacity-50 border border-transparent hover:border-green-500/20"
-                            title="Approve Request"
-                          >
-                            <CheckCircle2 size={20} />
-                          </button>
-                          <button 
                             disabled={actionLoading === request.id}
-                            onClick={() => handleAction(request.id, 'reject')}
-                            className="p-3 text-red-500 hover:bg-red-500/10 rounded-2xl transition-all disabled:opacity-50 border border-transparent hover:border-red-500/20"
-                            title="Reject Request"
+                            className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-all disabled:opacity-50 cursor-pointer"
                           >
-                            <XCircle size={20} />
+                            Approve
+                          </button>
+                          <button
+                            onClick={() => handleAction(request.id, 'reject')}
+                            disabled={actionLoading === request.id}
+                            className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-bold transition-all disabled:opacity-50 cursor-pointer"
+                          >
+                            Reject
                           </button>
                         </div>
+                      ) : (
+                        <span className="text-[11px] text-text-muted italic">Processed</span>
                       )}
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={5} className="px-8 py-16 text-center text-text-muted font-black uppercase tracking-[0.2em] italic text-sm">
-                    No signup requests found in the system.
+                  <td colSpan={5} className="px-6 py-12 text-center text-text-muted font-bold uppercase tracking-wider text-xs">
+                    No pending practitioner requests in queue.
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-12 mb-10">
-        <div className="bg-surface border border-subtle rounded-[2rem] p-8 space-y-4 shadow-xl">
-           <h3 className="text-text-main font-black flex items-center gap-3 text-sm uppercase tracking-widest">
-             <div className="p-2 bg-orange-500/10 rounded-lg">
-               <Activity size={18} className="text-orange-500" />
-             </div>
-             System Maintenance
-           </h3>
-           <p className="text-xs text-text-muted leading-relaxed font-bold">Database optimization and clinical asset indexing scheduled for Sunday, 04:00 AM UTC. System performance may be throttled.</p>
-        </div>
-        <div className="bg-surface border border-subtle rounded-[2rem] p-8 space-y-4 shadow-xl">
-           <h3 className="text-text-main font-black flex items-center gap-3 text-sm uppercase tracking-widest">
-             <div className="p-2 bg-primary/10 rounded-lg">
-               <ShieldCheck size={18} className="text-primary" />
-             </div>
-             Security Updates
-           </h3>
-           <p className="text-xs text-text-muted leading-relaxed font-bold">HIPAA configuration compliance check passed on Mar 2026. AES-256 encryption active for all multimodal data storage layers.</p>
         </div>
       </div>
     </div>
