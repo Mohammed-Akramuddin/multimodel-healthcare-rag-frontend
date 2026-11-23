@@ -24,41 +24,18 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(localStorage.getItem('healthcare_token'));
-  const [user, setUser] = useState<User | null>(() => {
-    const saved = localStorage.getItem('healthcare_user');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return null;
-      }
-    }
-    return null;
-  });
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchMe = async () => {
       if (token) {
         try {
           const res = await api.get('/api/auth/me');
-          if (res?.data) {
-            setUser(res.data);
-            localStorage.setItem('healthcare_user', JSON.stringify(res.data));
-          }
+          setUser(res.data);
         } catch (err) {
-          // If token is a valid demo token and we already have cached user, preserve it
-          const saved = localStorage.getItem('healthcare_user');
-          if (saved && (token.startsWith('demo_') || token.startsWith('sb_'))) {
-            try {
-              setUser(JSON.parse(saved));
-            } catch {
-              logout();
-            }
-          } else {
-            logout();
-          }
+          logout();
         }
       }
       setIsLoading(false);
@@ -68,7 +45,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = (newToken: string, newUser: User) => {
     localStorage.setItem('healthcare_token', newToken);
-    localStorage.setItem('healthcare_user', JSON.stringify(newUser));
     setToken(newToken);
     setUser(newUser);
   };
@@ -80,7 +56,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = () => {
     localStorage.removeItem('healthcare_token');
-    localStorage.removeItem('healthcare_user');
     setToken(null);
     setUser(null);
   };

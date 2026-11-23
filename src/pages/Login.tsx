@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth, User } from '../hooks/useAuth';
+import { useAuth } from '../hooks/useAuth';
 import api from '../lib/api';
-import { Shield, Lock, ShieldCheck, Mail, ArrowRight, MapPin, Sparkles } from 'lucide-react';
+import { Shield, Lock, ShieldCheck, Mail, ArrowRight, MapPin } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const Login = () => {
@@ -13,71 +13,24 @@ const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const demoAccounts: Record<string, User> = {
-    'doctor@demo.local': { id: 2, email: 'doctor@demo.local', role: 'doctor', full_name: 'Dr. Sarah Chen', is_active: true },
-    'admin@demo.local': { id: 1, email: 'admin@demo.local', role: 'admin', full_name: 'Shell Biotech Admin', is_active: true },
-    'patient@demo.local': { id: 3, email: 'patient@demo.local', role: 'patient', full_name: 'Alex Morgan', is_active: true, patient_profile_id: 1 },
-    'nurse@demo.local': { id: 4, email: 'nurse@demo.local', role: 'nurse', full_name: 'Nurse Jordan Lee', is_active: true },
-  };
-
-  const authenticateUser = async (userEmail: string, userPass: string) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     setIsLoading(true);
     setError('');
-    const cleanEmail = userEmail.toLowerCase().trim();
-
     try {
-      const res = await api.post('/api/auth/login', { email: cleanEmail, password: userPass });
+      const res = await api.post('/api/auth/login', { email, password });
       const token = res.data.access_token;
-      
-      let userData = res.data.user;
-      if (!userData) {
-        try {
-          const userRes = await api.get('/api/auth/me', {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          userData = userRes.data;
-        } catch {
-          userData = demoAccounts[cleanEmail] || {
-            id: 2,
-            email: cleanEmail,
-            role: 'doctor',
-            full_name: 'Healthcare Practitioner'
-          };
-        }
-      }
-
-      login(token, userData);
+      const userRes = await api.get('/api/auth/me', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      login(token, userRes.data);
       navigate('/');
     } catch (err: any) {
-      // If server returned error or is offline, check if it's one of the demo accounts
-      const fallback = demoAccounts[cleanEmail];
-      if (fallback) {
-        login(`sb_demo_${fallback.role}`, fallback);
-        navigate('/');
-        return;
-      }
-      setError(err.response?.data?.detail || err.response?.data?.message || 'Invalid credentials. Please click a Demo Portal below.');
+      setError(err.response?.data?.detail || err.response?.data?.message || 'Login failed. Please verify your credentials.');
     } finally {
       setIsLoading(false);
     }
   };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await authenticateUser(email, password);
-  };
-
-  const handleDemoClick = async (demoEmail: string, demoPass: string) => {
-    setEmail(demoEmail);
-    setPassword(demoPass);
-    await authenticateUser(demoEmail, demoPass);
-  };
-
-  const demoButtons = [
-    { label: 'Doctor Portal', email: 'doctor@demo.local', pass: 'doctor123!', desc: 'Full EMR, Charts, Labs' },
-    { label: 'Admin Portal', email: 'admin@demo.local', pass: 'admin123!', desc: 'System & Approvals' },
-    { label: 'Patient Portal', email: 'patient@demo.local', pass: 'patient123!', desc: 'Personal Care & AI' },
-  ];
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-background">
@@ -135,14 +88,14 @@ const Login = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full bg-surface border border-border-main rounded-xl px-4 py-3.5 pl-11 text-text-main focus:outline-none focus:ring-2 focus:ring-secondary/40 focus:border-secondary transition-all font-medium placeholder:text-text-muted/40 text-sm shadow-xs"
-                placeholder="doctor@demo.local"
+                placeholder="Enter your registered email"
               />
             </div>
           </div>
 
           <div className="space-y-1.5">
             <label className="text-[11px] font-bold text-text-main uppercase tracking-wider ml-1">
-              Secure Credentials
+              Secure Password
             </label>
             <div className="relative group">
               <Lock className="absolute left-4 top-3.5 text-text-muted group-focus-within:text-secondary transition-colors" size={18} />
@@ -152,7 +105,7 @@ const Login = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full bg-surface border border-border-main rounded-xl px-4 py-3.5 pl-11 text-text-main focus:outline-none focus:ring-2 focus:ring-secondary/40 focus:border-secondary transition-all font-medium placeholder:text-text-muted/40 text-sm shadow-xs"
-                placeholder="doctor123!"
+                placeholder="••••••••"
               />
             </div>
           </div>
@@ -186,39 +139,16 @@ const Login = () => {
           </motion.button>
         </form>
 
-        {/* 1-Click Demo Portals */}
-        <div className="mt-7 pt-5 border-t border-subtle">
-          <div className="flex items-center gap-2 mb-3">
-            <Sparkles size={14} className="text-secondary" />
-            <span className="text-[10px] font-bold text-text-muted uppercase tracking-[0.16em]">
-              Instant 1-Click Demo Logins
-            </span>
-          </div>
-          <div className="grid grid-cols-3 gap-2.5">
-            {demoButtons.map((demo) => (
-              <button
-                key={demo.label}
-                type="button"
-                onClick={() => handleDemoClick(demo.email, demo.pass)}
-                className="px-2.5 py-3 bg-surface hover:bg-secondary/10 hover:border-secondary/40 text-text-main hover:text-secondary border border-border-main rounded-xl transition-all shadow-xs text-center cursor-pointer group flex flex-col items-center gap-0.5"
-              >
-                <span className="text-xs font-bold text-text-main group-hover:text-secondary">{demo.label}</span>
-                <span className="text-[9px] text-text-muted font-medium">{demo.desc}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="mt-7 text-center space-y-3.5">
+        <div className="mt-8 text-center space-y-4 pt-4 border-t border-subtle">
           <p className="text-xs text-text-muted font-medium">
-            Authorized practitioner?{' '}
+            New healthcare practitioner?{' '}
             <Link to="/signup" className="text-secondary font-bold hover:underline ml-1">
               Request Clinical Access
             </Link>
           </p>
           <div className="flex items-center justify-center gap-2 text-[10px] text-text-subtle uppercase tracking-widest font-bold">
             <ShieldCheck size={13} className="text-secondary" /> 
-            <span>ISO Compliant · CDSCO & HIPAA Verified</span>
+            <span>AES-256 Secured · ISO & CDSCO Compliant</span>
           </div>
           <p className="text-[10px] text-text-subtle">
             © 2026 SHELL BIOTECH. Hyderabad – 501505, Telangana.
